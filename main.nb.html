@@ -1758,26 +1758,27 @@ based on the Logistic Regression classifier.</p>
 <p>First, we need to load the data into the workspace</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzdHJpbmdyKVxuXG5yZWFkX3Byb3RlaW5fZGF0YTwtZnVuY3Rpb24oZmlsZXBhdGgpe1xuICBsaW5lcyA8LSByZWFkTGluZXMoZmlsZXBhdGgpO1xuICBwcm90ZWluX2RhdGEgPC0gbGlzdCgpO1xuICBjdXJyZW50IDwtIE5VTEw7XG4gIFxuICBmb3IoIGkgaW4gMTpsZW5ndGgobGluZXMpKXtcbiAgICBcbiAgICBsaW5lPC1saW5lc1tpXTtcbiAgICBcbiAgICBpZihpJSU0ID09IDEpe1xuICAgICAgY3VycmVudCRpZDwtc3Vic3RyaW5nKGxpbmUsIDIpO1xuICAgIH0gZWxzZSBpZihpJSU0ID09Mil7XG4gICAgICBjdXJyZW50JHNlcXVlbmNlPC1saW5lXG4gICAgfSBlbHNlIGlmKGklJTQgPT0zKXtcbiAgICAgIGN1cnJlbnQkc3RydWN0dXJlPC1saW5lICAgICAgXG4gICAgfSBlbHNlIGlmKGklJTQgPT0wKXtcbiAgICAgIHByb3RlaW5fZGF0YTwtYXBwZW5kKGN1cnJlbnQsIHByb3RlaW5fZGF0YSk7XG4gICAgfVxuICB9XG4gIHJldHVybihwcm90ZWluX2RhdGEpXG59XG5cbnByb3RlaW5fZGF0YSA9IHJlYWRfcHJvdGVpbl9kYXRhKFwidGVzdC50eHRcIik7XG4gIFxuICBcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzdHJpbmdyKVxuXG4jIGZ1bmN0aW9uIHRvIHJlYWQgdGhlIGRhdGEgZnJvbSBmaWxlXG5yZWFkX3Byb3RlaW5fZGF0YTwtZnVuY3Rpb24oZmlsZXBhdGgpe1xuICBsaW5lcyA8LSByZWFkTGluZXMoZmlsZXBhdGgpOyAjIHJlYWQgYWxsIGxpbmVzXG4gIHByb3RlaW5fZGF0YSA8LSBsaXN0KCk7ICMgaW5pdGlhbGl6ZSB2YXJpYWJsZXNcbiAgY3VycmVudCA8LSBOVUxMO1xuICBcbiAgZm9yKCBpIGluIDE6bGVuZ3RoKGxpbmVzKSl7XG4gICAgXG4gICAgbGluZTwtbGluZXNbaV07ICMgcmVhZCBsaW5lXG4gICAgXG4gICAgaWYoaSUlNCA9PSAxKXtcbiAgICAgIGN1cnJlbnQkaWQ8LXN1YnN0cmluZyhsaW5lLCAyKTsgIyBhZGQgaWQgd2l0aG91dCAnPDwnXG4gICAgfSBlbHNlIGlmKGklJTQgPT0yKXtcbiAgICAgIGN1cnJlbnQkc2VxdWVuY2U8LWxpbmUgIyByZWFkIHNlcXVlbmNlXG4gICAgfSBlbHNlIGlmKGklJTQgPT0zKXtcbiAgICAgIGN1cnJlbnQkc3RydWN0dXJlPC1vcnRob2dvbmFsbHlfZW5jb2RpbmcobGluZSkgICNyZWFkIHNlY29uZGFyeSBzdHJ1Y3R1cmUgICAgXG4gICAgfSBlbHNlIGlmKGklJTQgPT0wKXtcbiAgICAgIHByb3RlaW5fZGF0YTwtYXBwZW5kKGN1cnJlbnQsIHByb3RlaW5fZGF0YSk7ICMgYWRkIHByb3RlaW4gdG8gdGhlIGxpc3RcbiAgICB9XG4gIH1cbiAgcmV0dXJuKHByb3RlaW5fZGF0YSlcbn1cblxucHJvdGVpbl9kYXRhID0gcmVhZF9wcm90ZWluX2RhdGEoXCJ0ZXN0LnR4dFwiKTtcbiAgXG4gIFxuYGBgIn0= -->
 <pre class="r"><code>library(stringr)
 
+# function to read the data from file
 read_protein_data&lt;-function(filepath){
-  lines &lt;- readLines(filepath);
-  protein_data &lt;- list();
+  lines &lt;- readLines(filepath); # read all lines
+  protein_data &lt;- list(); # initialize variables
   current &lt;- NULL;
   
   for( i in 1:length(lines)){
     
-    line&lt;-lines[i];
+    line&lt;-lines[i]; # read line
     
     if(i%%4 == 1){
-      current$id&lt;-substring(line, 2);
+      current$id&lt;-substring(line, 2); # add id without &#39;&lt;&lt;&#39;
     } else if(i%%4 ==2){
-      current$sequence&lt;-line
+      current$sequence&lt;-line # read sequence
     } else if(i%%4 ==3){
-      current$structure&lt;-line      
+      current$structure&lt;-orthogonally_encoding(line)  #read secondary structure    
     } else if(i%%4 ==0){
-      protein_data&lt;-append(current, protein_data);
+      protein_data&lt;-append(current, protein_data); # add protein to the list
     }
   }
   return(protein_data)
@@ -1789,18 +1790,31 @@ protein_data = read_protein_data(&quot;test.txt&quot;);
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the
-toolbar or by pressing <em>Ctrl+Alt+I</em>.</p>
-<p>When you save the notebook, an HTML file containing the code and
-output will be saved alongside it (click the <em>Preview</em> button or
-press <em>Ctrl+Shift+K</em> to preview the HTML file).</p>
-<p>The preview shows you a rendered HTML copy of the contents of the
-editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not
-run any R code chunks. Instead, the output of the chunk when it was last
-run in the editor is displayed.</p>
+<p>Then the protein structure needs to be orthogonally encoded.</p>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5vcnRob2dvbmFsbHlfZW5jb2Rpbmc8LWZ1bmN0aW9uKHNlcXVlbmNlKXtcbiAgXG4gIGFtaW5vX2FjaWRzIDwtIGMoXCJBXCIsIFwiQ1wiLCBcIkRcIiwgXCJFXCIsIFwiRlwiLCBcIkdcIiwgXCJIXCIsIFwiSVwiLCBcIktcIiwgXCJMXCIsIFwiTVwiLCBcIk5cIiwgXCJQXCIsIFwiUVwiLFxuICAgICAgICAgICAgICAgICAgIFwiUlwiLCBcIlNcIiwgXCJUXCIsIFwiVlwiLCBcIldcIiwgXCJZXCIsXCJYXCIpO1xuICBlbmNvZGVkX3NlcXVlbmNlIDwtIG1hdHJpeCgwLCBucm93ID0gbGVuZ3RoKHNlcXVlbmNlKSwgbmNvbCA9IGxlbmd0aChhbWlub19hY2lkcykpXG4gIFxuICBmb3IgKGkgaW4gMTpsZW5ndGgoc2VxdWVuY2UpKSB7XG4gICAgYWEgPC0gc3Vic3RyaW5nKHNlcXVlbmNlLCBpLCBpKVxuICAgIGlkeCA8LSBtYXRjaChhYSwgYW1pbm9fYWNpZHMpXG4gICAgaWYgKCFpcy5uYShpZHgpKSB7XG4gICAgICBlbmNvZGVkX3NlcXVlbmNlW2ksIGlkeF0gPC0gMVxuICAgIH1cbiAgfVxuICBcbiAgcmV0dXJuKGVuY29kZWRfc2VxdWVuY2UpXG59XG5gYGAifQ== -->
+<pre class="r"><code>
+orthogonally_encoding&lt;-function(sequence){
+  
+  amino_acids &lt;- c(&quot;A&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;, &quot;F&quot;, &quot;G&quot;, &quot;H&quot;, &quot;I&quot;, &quot;K&quot;, &quot;L&quot;, &quot;M&quot;, &quot;N&quot;, &quot;P&quot;, &quot;Q&quot;,
+                   &quot;R&quot;, &quot;S&quot;, &quot;T&quot;, &quot;V&quot;, &quot;W&quot;, &quot;Y&quot;,&quot;X&quot;);
+  encoded_sequence &lt;- matrix(0, nrow = length(sequence), ncol = length(amino_acids))
+  
+  for (i in 1:length(sequence)) {
+    aa &lt;- substring(sequence, i, i)
+    idx &lt;- match(aa, amino_acids)
+    if (!is.na(idx)) {
+      encoded_sequence[i, idx] &lt;- 1
+    }
+  }
+  
+  return(encoded_sequence)
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlRoZSBQcm90ZWluIFNlY29uZGFyeSBTdHJ1Y3R1cmUgUHJlZGljdGlvbiINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCldlIGhhdmUgaW50cm9kdWNlZCBhIHByb3RlaW4gc2Vjb25kYXJ5IHN0cnVjdHVyZSBwcmVkaWN0aW9uIG1ldGhvZCBiYXNlZCBvbiB0aGUgTG9naXN0aWMgUmVncmVzc2lvbiBjbGFzc2lmaWVyLg0KDQpGaXJzdCwgd2UgbmVlZCB0byBsb2FkIHRoZSBkYXRhIGludG8gdGhlIHdvcmtzcGFjZQ0KDQpgYGB7cn0NCmxpYnJhcnkoc3RyaW5ncikNCg0KIyBmdW5jdGlvbiB0byByZWFkIHRoZSBkYXRhIGZyb20gZmlsZQ0KcmVhZF9wcm90ZWluX2RhdGE8LWZ1bmN0aW9uKGZpbGVwYXRoKXsNCiAgbGluZXMgPC0gcmVhZExpbmVzKGZpbGVwYXRoKTsgIyByZWFkIGFsbCBsaW5lcw0KICBwcm90ZWluX2RhdGEgPC0gbGlzdCgpOyAjIGluaXRpYWxpemUgdmFyaWFibGVzDQogIGN1cnJlbnQgPC0gTlVMTDsNCiAgDQogIGZvciggaSBpbiAxOmxlbmd0aChsaW5lcykpew0KICAgIA0KICAgIGxpbmU8LWxpbmVzW2ldOyAjIHJlYWQgbGluZQ0KICAgIA0KICAgIGlmKGklJTQgPT0gMSl7DQogICAgICBjdXJyZW50JGlkPC1zdWJzdHJpbmcobGluZSwgMik7ICMgYWRkIGlkIHdpdGhvdXQgJzw8Jw0KICAgIH0gZWxzZSBpZihpJSU0ID09Mil7DQogICAgICBjdXJyZW50JHNlcXVlbmNlPC1saW5lICMgcmVhZCBzZXF1ZW5jZQ0KICAgIH0gZWxzZSBpZihpJSU0ID09Myl7DQogICAgICBjdXJyZW50JHN0cnVjdHVyZTwtbGluZSAgI3JlYWQgc2Vjb25kYXJ5IHN0cnVjdHVyZSAgICANCiAgICB9IGVsc2UgaWYoaSUlNCA9PTApew0KICAgICAgcHJvdGVpbl9kYXRhPC1hcHBlbmQoY3VycmVudCwgcHJvdGVpbl9kYXRhKTsgIyBhZGQgcHJvdGVpbiB0byB0aGUgbGlzdA0KICAgIH0NCiAgfQ0KICByZXR1cm4ocHJvdGVpbl9kYXRhKQ0KfQ0KDQpwcm90ZWluX2RhdGEgPSByZWFkX3Byb3RlaW5fZGF0YSgidGVzdC50eHQiKTsNCiAgDQogIA0KYGBgDQoNCkFkZCBhIG5ldyBjaHVuayBieSBjbGlja2luZyB0aGUgKkluc2VydCBDaHVuayogYnV0dG9uIG9uIHRoZSB0b29sYmFyIG9yIGJ5IHByZXNzaW5nICpDdHJsK0FsdCtJKi4NCg0KV2hlbiB5b3Ugc2F2ZSB0aGUgbm90ZWJvb2ssIGFuIEhUTUwgZmlsZSBjb250YWluaW5nIHRoZSBjb2RlIGFuZCBvdXRwdXQgd2lsbCBiZSBzYXZlZCBhbG9uZ3NpZGUgaXQgKGNsaWNrIHRoZSAqUHJldmlldyogYnV0dG9uIG9yIHByZXNzICpDdHJsK1NoaWZ0K0sqIHRvIHByZXZpZXcgdGhlIEhUTUwgZmlsZSkuDQoNClRoZSBwcmV2aWV3IHNob3dzIHlvdSBhIHJlbmRlcmVkIEhUTUwgY29weSBvZiB0aGUgY29udGVudHMgb2YgdGhlIGVkaXRvci4gQ29uc2VxdWVudGx5LCB1bmxpa2UgKktuaXQqLCAqUHJldmlldyogZG9lcyBub3QgcnVuIGFueSBSIGNvZGUgY2h1bmtzLiBJbnN0ZWFkLCB0aGUgb3V0cHV0IG9mIHRoZSBjaHVuayB3aGVuIGl0IHdhcyBsYXN0IHJ1biBpbiB0aGUgZWRpdG9yIGlzIGRpc3BsYXllZC4NCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlRoZSBQcm90ZWluIFNlY29uZGFyeSBTdHJ1Y3R1cmUgUHJlZGljdGlvbiINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCldlIGhhdmUgaW50cm9kdWNlZCBhIHByb3RlaW4gc2Vjb25kYXJ5IHN0cnVjdHVyZSBwcmVkaWN0aW9uIG1ldGhvZCBiYXNlZCBvbiB0aGUgTG9naXN0aWMgUmVncmVzc2lvbiBjbGFzc2lmaWVyLg0KDQpGaXJzdCwgd2UgbmVlZCB0byBsb2FkIHRoZSBkYXRhIGludG8gdGhlIHdvcmtzcGFjZQ0KDQpgYGB7cn0NCmxpYnJhcnkoc3RyaW5ncikNCg0KIyBmdW5jdGlvbiB0byByZWFkIHRoZSBkYXRhIGZyb20gZmlsZQ0KcmVhZF9wcm90ZWluX2RhdGE8LWZ1bmN0aW9uKGZpbGVwYXRoKXsNCiAgbGluZXMgPC0gcmVhZExpbmVzKGZpbGVwYXRoKTsgIyByZWFkIGFsbCBsaW5lcw0KICBwcm90ZWluX2RhdGEgPC0gbGlzdCgpOyAjIGluaXRpYWxpemUgdmFyaWFibGVzDQogIGN1cnJlbnQgPC0gTlVMTDsNCiAgDQogIGZvciggaSBpbiAxOmxlbmd0aChsaW5lcykpew0KICAgIA0KICAgIGxpbmU8LWxpbmVzW2ldOyAjIHJlYWQgbGluZQ0KICAgIA0KICAgIGlmKGklJTQgPT0gMSl7DQogICAgICBjdXJyZW50JGlkPC1zdWJzdHJpbmcobGluZSwgMik7ICMgYWRkIGlkIHdpdGhvdXQgJzw8Jw0KICAgIH0gZWxzZSBpZihpJSU0ID09Mil7DQogICAgICBjdXJyZW50JHNlcXVlbmNlPC1saW5lICMgcmVhZCBzZXF1ZW5jZQ0KICAgIH0gZWxzZSBpZihpJSU0ID09Myl7DQogICAgICBjdXJyZW50JHN0cnVjdHVyZTwtb3J0aG9nb25hbGx5X2VuY29kaW5nKGxpbmUpICAjcmVhZCBzZWNvbmRhcnkgc3RydWN0dXJlICAgIA0KICAgIH0gZWxzZSBpZihpJSU0ID09MCl7DQogICAgICBwcm90ZWluX2RhdGE8LWFwcGVuZChjdXJyZW50LCBwcm90ZWluX2RhdGEpOyAjIGFkZCBwcm90ZWluIHRvIHRoZSBsaXN0DQogICAgfQ0KICB9DQogIHJldHVybihwcm90ZWluX2RhdGEpDQp9DQoNCnByb3RlaW5fZGF0YSA9IHJlYWRfcHJvdGVpbl9kYXRhKCJ0ZXN0LnR4dCIpOw0KICANCiAgDQpgYGANCg0KVGhlbiB0aGUgcHJvdGVpbiBzdHJ1Y3R1cmUgbmVlZHMgdG8gYmUgb3J0aG9nb25hbGx5IGVuY29kZWQuDQoNCmBgYHtyfQ0KDQpvcnRob2dvbmFsbHlfZW5jb2Rpbmc8LWZ1bmN0aW9uKHNlcXVlbmNlKXsNCiAgDQogIGFtaW5vX2FjaWRzIDwtIGMoIkEiLCAiQyIsICJEIiwgIkUiLCAiRiIsICJHIiwgIkgiLCAiSSIsICJLIiwgIkwiLCAiTSIsICJOIiwgIlAiLCAiUSIsDQogICAgICAgICAgICAgICAgICAgIlIiLCAiUyIsICJUIiwgIlYiLCAiVyIsICJZIiwiWCIpOw0KICBlbmNvZGVkX3NlcXVlbmNlIDwtIG1hdHJpeCgwLCBucm93ID0gbGVuZ3RoKHNlcXVlbmNlKSwgbmNvbCA9IGxlbmd0aChhbWlub19hY2lkcykpDQogIA0KICBmb3IgKGkgaW4gMTpsZW5ndGgoc2VxdWVuY2UpKSB7DQogICAgYWEgPC0gc3Vic3RyaW5nKHNlcXVlbmNlLCBpLCBpKQ0KICAgIGlkeCA8LSBtYXRjaChhYSwgYW1pbm9fYWNpZHMpDQogICAgaWYgKCFpcy5uYShpZHgpKSB7DQogICAgICBlbmNvZGVkX3NlcXVlbmNlW2ksIGlkeF0gPC0gMQ0KICAgIH0NCiAgfQ0KICANCiAgcmV0dXJuKGVuY29kZWRfc2VxdWVuY2UpDQp9DQpgYGANCg==</div>
 
 
 

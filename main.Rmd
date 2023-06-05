@@ -25,7 +25,7 @@ read_protein_data<-function(filepath){
     } else if(i%%4 ==2){
       current$sequence<-line # read sequence
     } else if(i%%4 ==3){
-      current$structure<-line  #read secondary structure    
+      current$structure<-orthogonally_encoding(line)  #read secondary structure    
     } else if(i%%4 ==0){
       protein_data<-append(current, protein_data); # add protein to the list
     }
@@ -38,8 +38,24 @@ protein_data = read_protein_data("test.txt");
   
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+Then the protein structure needs to be orthogonally encoded.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r}
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+orthogonally_encoding<-function(sequence){
+  
+  amino_acids <- c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q",
+                   "R", "S", "T", "V", "W", "Y","X");
+  encoded_sequence <- matrix(0, nrow = length(sequence), ncol = length(amino_acids))
+  
+  for (i in 1:length(sequence)) {
+    aa <- substring(sequence, i, i)
+    idx <- match(aa, amino_acids)
+    if (!is.na(idx)) {
+      encoded_sequence[i, idx] <- 1
+    }
+  }
+  
+  return(encoded_sequence)
+}
+```
