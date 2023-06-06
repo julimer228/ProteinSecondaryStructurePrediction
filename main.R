@@ -8,7 +8,7 @@ library(stringr)
 orthogonally_encoding<-function(sequence){
   
   amino_acids <- c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q",
-                   "R", "S", "T", "V", "W", "Y","X");
+                   "R", "S", "T", "V", "W", "Y");
   
   # initialize the matrix
   encoded_sequence <- matrix(0, nrow = nchar(sequence), ncol = length(amino_acids))
@@ -31,6 +31,8 @@ create_window<-function(protein, index, window_size){
   # idx - the index of the aminoacid on which the window will be centered
   # window_size - the size of the window
   # returns the encoded aminoacids chain
+  extension_char<-"-"
+  
   
   protein_length <- length(protein);
   
@@ -38,18 +40,27 @@ create_window<-function(protein, index, window_size){
   range<-floor(window_size/2);
   
   # we need to create the auxiliary protein
-  # we need to complement the protein on the right and left with the first and last amino    # acid 
-  first<-substring(protein, 1,1);
-  last<-substring(protein, protein_length, protein_length);
-  temp_protein <-paste0(first,protein,last);
+  
+ 
   
   # new index in the temp_protein
   index = index + range;
   
   # we have to calculate the range of aminoacids and copy them
+  extended_left="";
+  extended_right="";
   start<-index-range;
+  if(start<0){
+     extended_left=rep(-start, extension_char);
+  }
   stop<-index+range;
+  if(stop<0){
+    extended_right =rep(stop-rotein_length, extension_char);
+  }
   
+  
+  
+  temp_protein <-paste0(extended_left,protein,extended_right);
   window<-substring(temp_protein,start, stop);
   return(window);
   
@@ -58,19 +69,21 @@ create_window<-function(protein, index, window_size){
 
 sample_data<-function(protein, second_lv_struct, window_size){
   
-  sample_list<-list();
-  sample<-NULL; 
+  sample_list<-data.frame();
+  sample<-NULL;
   
   for(i in 1:nchar(protein)){
     
-    vector<-create_window(protein,i,window_size);
-    encoded_vector<-orthogonally_encoding(vector);
+    window<-create_window(protein,i,window_size);
+    encoded<-data.frame(orthogonally_encoding(window));
     struct_str<-substring(second_lv_struct,i,i);
     
-    sample$vector<-encoded_vector;
-    sample$struct<-struct_str;
+    current<-data.frame(
+    encoded,
+    struct_str
+    )
     
-    sample_list<-append(sample,sample_list);
+    sample_list<-rbind(current,sample_list);
   }
   
   return(sample_list);
@@ -82,8 +95,9 @@ sample_data<-function(protein, second_lv_struct, window_size){
 
 # function to read the data from file
 read_protein_data<-function(filepath){
+  
   lines <- readLines(filepath); # read all lines
-  protein_data <- list(); # initialize variables
+  protein_data <- data.frame(); # initialize variables
   current <- NULL;
   
   for( i in 1:length(lines)){
@@ -91,20 +105,92 @@ read_protein_data<-function(filepath){
     line<-lines[i]; # read line
     
     if(i%%4 == 1){
-      current$id<-substring(line, 2); # add id without '<<'
+      id<-substring(line, 2); # add id without '<<'
     } else if(i%%4 == 2){
-      current$sequence<-line # read sequence
+      sequence<-line # read sequence
     } else if(i%%4 == 3){
-      current$structure<-line;  #read secondary structure    
+      sec_lvl_struct<-line;  #read secondary structure
     } else if(i%%4 == 0){
-      current$sampled_data<-sample_data(current$sequence,current$structure,20)
-      protein_data<-append(current, protein_data); # add protein to the list
+    
+      current<-data.frame(
+        id,
+        sequence,
+        sec_lvl_struct
+      )
+      protein_data = rbind(protein_data,current);
+      
+      #current$sampled_data<-sample_data(current$sequence,current$structure,20)
+      #protein_data<-append(current, protein_data); # add protein to the list
     }
+    
+    
+    
     
   }
   return(protein_data);
 }
 
-protein_data = read_protein_data("test.txt");
+create_samples<-function(window_size, filepath){
+  # read data into the workspace
+  protein_data = read_protein_data(filepath);
+  samples <- data.frame(); # initialize variables
+  
+  # create samples 
+  for(i in 1:length(protein_data)){
+    current = protein_data[i,];
+    protein = current$sequence;
+    second_lv_struct = current$sec_lvl_struct;
+    
+    sample =data.frame(sample_data(protein, second_lv_struct, window_size));
+    samples=rbind(sample,samples);
+  }
+  return(samples);
+}
 
+create_binary_classifier<-function(test_filepath, train_filepath, window_size){
+  
+  test_samples = create_samples(window_size, "test.txt");
+  train_samples = create_samples(window_size,"train.txt");
+  
+  train_samples_CnotC = create_binary_samples(train_samples, "C");
+  test_samples_CnotC = create_binary_samples(train_samples, "C");
+  
+  train_samples_HnotH = create_binary_samples(train_samples, "H");
+  test_samples_HnotH = create_binary_samples(train_samples, "H");
+  
+  train_samplesEnotE = create_binary_samples(train_samples, "E");
+  test_samplesEnotE = create_binary_samples(train_samples, "E");
+  
+  
+  
+  
+}
+
+create_binary_samples<-function(data, className){
+  
+  binary_data<-data.frame();
+  for(i in 1:nrow(data)){
+    row = data[i,];
+    general_class = row$struct_str;
+    if(general_class==className){
+      binary_class=className;
+    }
+    else{
+      binary_class=paste0("~",className);
+    }
+    
+    current = data.frame(row, binary_class);
+    binary_data=rbind(current, binary_data);
+  }  
+  
+  return(binary_data);
+}
+
+
+x=create_binary_classifier("test.txt", "train.txt", 17);
+library(ggplot2)
+x$binary_class=as.factor(x$binary_class);
+ggplot(x, aes(struct_str, fill = binary_class)) +
+  geom_bar() +
+  coord_flip()
 
