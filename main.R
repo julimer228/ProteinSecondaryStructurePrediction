@@ -11,12 +11,12 @@ orthogonally_encoding<-function(sequence){
                    "R", "S", "T", "V", "W", "Y");
   
   # initialize the matrix
-  encoded_sequence <- matrix(0, nrow = nchar(sequence), ncol = length(amino_acids))
+  encoded_sequence <- matrix(0, nrow = nchar(sequence), ncol = length(amino_acids+1))# +1 because of the "_"
   
   for (i in 1:nchar(sequence)) {
     aa <- substring(sequence, i, i)
     idx <- match(aa, amino_acids)
-    if (!is.na(idx)) {
+    if (!is.na(idx) && idx !="_") {
       encoded_sequence[i, idx] <- 1
     }
   }
@@ -31,7 +31,7 @@ create_window<-function(protein, index, window_size){
   # idx - the index of the aminoacid on which the window will be centered
   # window_size - the size of the window
   # returns the encoded aminoacids chain
-  extension_char<-"-"
+  extension_char<-"_"
   
   
   protein_length <- nchar(protein);

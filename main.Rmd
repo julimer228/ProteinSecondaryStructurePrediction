@@ -22,26 +22,7 @@ First, we need to load the data into the workspace
   train_samplesEnotE = create_binary_samples(train_samples, "E");
   test_samplesEnotE = create_binary_samples(test_samples, "E");
   
-  
-      response_var <- "binary_class"
-    results <- fit_logistic_regression(train_samples_HnotH, test_samples_HnotH, response_var)
-    classifier_results[[class_name]] <- results
-  
-  
-  
-library(readr)
-library(tidymodels)
-  
-  # logistic regression
-  model <- logistic_reg(mixture = double(1), penalty = double(1))
-  set_engine("glmnet") %>%
-  set_mode("classification") %>%
-  fit(y ~ ., data = train_samples_CnotC)
-
-# Model summary
-tidy(model)
-  
 ```
 
-```         
+```{r}
 ```
