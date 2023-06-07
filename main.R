@@ -34,28 +34,25 @@ create_window<-function(protein, index, window_size){
   extension_char<-"-"
   
   
-  protein_length <- length(protein);
+  protein_length <- nchar(protein);
   
   # the number of elements on the left and the right side from the center
   range<-floor(window_size/2);
-  
-  # we need to create the auxiliary protein
-  
- 
-  
-  # new index in the temp_protein
-  index = index + range;
   
   # we have to calculate the range of aminoacids and copy them
   extended_left="";
   extended_right="";
   start<-index-range;
-  if(start<0){
-     extended_left=rep(-start, extension_char);
+  if(start<1){
+     extended_left=toString(rep(extension_char, abs(start)+1, collapse = NULL));
+     extended_left=gsub(',','',extended_left);
+     extended_left=gsub(' ','',extended_left);
   }
   stop<-index+range;
-  if(stop<0){
-    extended_right =rep(stop-rotein_length, extension_char);
+  if(stop>protein_length){
+    extended_right =toString(rep(extension_char, stop-protein_length+1), collapse = NULL);
+    extended_right=gsub(',','',extended_right);
+    extended_right=gsub(' ','',extended_right);
   }
   
   
@@ -187,10 +184,29 @@ create_binary_samples<-function(data, className){
 }
 
 
-x=create_binary_classifier("test.txt", "train.txt", 17);
-library(ggplot2)
-x$binary_class=as.factor(x$binary_class);
-ggplot(x, aes(struct_str, fill = binary_class)) +
-  geom_bar() +
-  coord_flip()
+fit_logistic_regression <- function(train_data, test_data, response_var) {
+  # Prepare the data for glmnet
+  x_train <- as.matrix(train_data[, -which(names(train_data) == response_var)])
+  y_train <- as.factor(train_data[[response_var]])
+  x_test <- as.matrix(test_data[, -which(names(test_data) == response_var)])
+  y_test <- as.factor(test_data[[response_var]])
+  
+  # Fit the logistic regression model
+  model <- glmnet(x_train, y_train, family = "binomial", alpha = 0.5)
+  
+  # Predict on the test set
+  predictions <- predict(model, x_test, type = "response", s = 0.1)
+  predicted_classes <- ifelse(predictions > 0.5, levels(y_train)[2], levels(y_train)[1])
+  
+  # Calculate accuracy
+  accuracy <- mean(predicted_classes == y_test)
+  
+  return(list(model = model, accuracy = accuracy))
+}
+
+## library(ggplot2)
+# x$binary_class=as.factor(x$binary_class);
+# ggplot(x, aes(struct_str, fill = binary_class)) +
+#   geom_bar() +
+#   coord_flip()
 
