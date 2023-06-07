@@ -180,7 +180,7 @@ create_binary_samples<-function(data, className){
       binary_class=-1;
     }
     
-    current = data.frame(row, binary_class);
+    current = data.frame(binary_class,row);
     binary_data=rbind(current, binary_data);
   }  
   

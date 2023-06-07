@@ -1758,19 +1758,47 @@ based on the Logistic Regression classifier.</p>
 <p>First, we need to load the data into the workspace</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4gIHdpbmRvd19zaXplPTIwO1xuICB0ZXN0X3NhbXBsZXMgPSBjcmVhdGVfc2FtcGxlcyh3aW5kb3dfc2l6ZSwgXCJ0ZXN0LnR4dFwiKTtcbiAgdHJhaW5fc2FtcGxlcyA9IGNyZWF0ZV9zYW1wbGVzKHdpbmRvd19zaXplLFwidHJhaW4udHh0XCIpO1xuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4gIHdpbmRvd19zaXplPTIwO1xuICB0ZXN0X3NhbXBsZXMgPSBjcmVhdGVfc2FtcGxlcyh3aW5kb3dfc2l6ZSwgXCJ0ZXN0LnR4dFwiKTtcbiAgdHJhaW5fc2FtcGxlcyA9IGNyZWF0ZV9zYW1wbGVzKHdpbmRvd19zaXplLFwidHJhaW4udHh0XCIpO1xuICBcbiAgdHJhaW5fc2FtcGxlc19Dbm90QyA9IGNyZWF0ZV9iaW5hcnlfc2FtcGxlcyh0cmFpbl9zYW1wbGVzLCBcIkNcIik7XG4gIHRlc3Rfc2FtcGxlc19Dbm90QyA9IGNyZWF0ZV9iaW5hcnlfc2FtcGxlcyh0ZXN0X3NhbXBsZXMsIFwiQ1wiKTtcbiAgXG4gIHRyYWluX3NhbXBsZXNfSG5vdEggPSBjcmVhdGVfYmluYXJ5X3NhbXBsZXModHJhaW5fc2FtcGxlcywgXCJIXCIpO1xuICB0ZXN0X3NhbXBsZXNfSG5vdEggPSBjcmVhdGVfYmluYXJ5X3NhbXBsZXModGVzdF9zYW1wbGVzLCBcIkhcIik7XG4gIFxuICB0cmFpbl9zYW1wbGVzRW5vdEUgPSBjcmVhdGVfYmluYXJ5X3NhbXBsZXModHJhaW5fc2FtcGxlcywgXCJFXCIpO1xuICB0ZXN0X3NhbXBsZXNFbm90RSA9IGNyZWF0ZV9iaW5hcnlfc2FtcGxlcyh0ZXN0X3NhbXBsZXMsIFwiRVwiKTtcbiAgXG5gYGAifQ== -->
 <pre class="r"><code>
   window_size=20;
   test_samples = create_samples(window_size, &quot;test.txt&quot;);
-  train_samples = create_samples(window_size,&quot;train.txt&quot;);</code></pre>
+  train_samples = create_samples(window_size,&quot;train.txt&quot;);
+  
+  train_samples_CnotC = create_binary_samples(train_samples, &quot;C&quot;);
+  test_samples_CnotC = create_binary_samples(test_samples, &quot;C&quot;);
+  
+  train_samples_HnotH = create_binary_samples(train_samples, &quot;H&quot;);
+  test_samples_HnotH = create_binary_samples(test_samples, &quot;H&quot;);
+  
+  train_samplesEnotE = create_binary_samples(train_samples, &quot;E&quot;);
+  test_samplesEnotE = create_binary_samples(test_samples, &quot;E&quot;);
+  </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29yZWxhdGlvbjwtY29yKHRyYWluX3NhbXBsZXNfQ25vdENbLDI6NDQzXSlcbm1vZGVsPC1nbG0oYXMuZmFjdG9yKGJpbmFyeV9jbGFzcyl+LlxuYGBgIn0= -->
+<pre class="r"><code>corelation&lt;-cor(train_samples_CnotC[,2:443])
+model&lt;-glm(as.factor(binary_class)~.</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueD1wcmVkaWN0KG1vZGVsLCB0eXBlID0gXCJyZXNwb25zZVwiKVxueCA8LSBpZmVsc2UoeCA+PSAwLjUsIFwiQ1wiLCBcIn5DXCIpXG5cbmN0YWJfdHJhaW4gPC0gdGFibGUodHJhaW4kQ2xhc3MsIHRyYWluJHByZWRfY2xhc3MpXG5jdGFiX3RyYWluXG5gYGAifQ== -->
+<pre class="r"><code>x=predict(model, type = &quot;response&quot;)
+x &lt;- ifelse(x &gt;= 0.5, &quot;C&quot;, &quot;~C&quot;)
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlRoZSBQcm90ZWluIFNlY29uZGFyeSBTdHJ1Y3R1cmUgUHJlZGljdGlvbiINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCldlIGhhdmUgaW50cm9kdWNlZCBhIHByb3RlaW4gc2Vjb25kYXJ5IHN0cnVjdHVyZSBwcmVkaWN0aW9uIG1ldGhvZCBiYXNlZCBvbiB0aGUgTG9naXN0aWMgUmVncmVzc2lvbiBjbGFzc2lmaWVyLg0KDQpGaXJzdCwgd2UgbmVlZCB0byBsb2FkIHRoZSBkYXRhIGludG8gdGhlIHdvcmtzcGFjZQ0KDQpgYGB7cn0NCg0KICB3aW5kb3dfc2l6ZT0yMDsNCiAgdGVzdF9zYW1wbGVzID0gY3JlYXRlX3NhbXBsZXMod2luZG93X3NpemUsICJ0ZXN0LnR4dCIpOw0KICB0cmFpbl9zYW1wbGVzID0gY3JlYXRlX3NhbXBsZXMod2luZG93X3NpemUsInRyYWluLnR4dCIpOw0KICANCiAgdHJhaW5fc2FtcGxlc19Dbm90QyA9IGNyZWF0ZV9iaW5hcnlfc2FtcGxlcyh0cmFpbl9zYW1wbGVzLCAiQyIpOw0KICB0ZXN0X3NhbXBsZXNfQ25vdEMgPSBjcmVhdGVfYmluYXJ5X3NhbXBsZXModGVzdF9zYW1wbGVzLCAiQyIpOw0KICANCiAgdHJhaW5fc2FtcGxlc19Ibm90SCA9IGNyZWF0ZV9iaW5hcnlfc2FtcGxlcyh0cmFpbl9zYW1wbGVzLCAiSCIpOw0KICB0ZXN0X3NhbXBsZXNfSG5vdEggPSBjcmVhdGVfYmluYXJ5X3NhbXBsZXModGVzdF9zYW1wbGVzLCAiSCIpOw0KICANCiAgdHJhaW5fc2FtcGxlc0Vub3RFID0gY3JlYXRlX2JpbmFyeV9zYW1wbGVzKHRyYWluX3NhbXBsZXMsICJFIik7DQogIHRlc3Rfc2FtcGxlc0Vub3RFID0gY3JlYXRlX2JpbmFyeV9zYW1wbGVzKHRlc3Rfc2FtcGxlcywgIkUiKTsNCiAgDQpgYGANCg0KYGBge3J9DQpgYGANCg==</div>
+ctab_train &lt;- table(train$Class, train$pred_class)
+ctab_train</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><code>{, family=binomial, data=train_samples_CnotC)} summary(model)</code></p>
+<!-- rnb-text-end -->
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlRoZSBQcm90ZWluIFNlY29uZGFyeSBTdHJ1Y3R1cmUgUHJlZGljdGlvbiINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCldlIGhhdmUgaW50cm9kdWNlZCBhIHByb3RlaW4gc2Vjb25kYXJ5IHN0cnVjdHVyZSBwcmVkaWN0aW9uIG1ldGhvZCBiYXNlZCBvbiB0aGUgTG9naXN0aWMgUmVncmVzc2lvbiBjbGFzc2lmaWVyLg0KDQpGaXJzdCwgd2UgbmVlZCB0byBsb2FkIHRoZSBkYXRhIGludG8gdGhlIHdvcmtzcGFjZQ0KDQpgYGB7cn0NCg0KICB3aW5kb3dfc2l6ZT0yMDsNCiAgdGVzdF9zYW1wbGVzID0gY3JlYXRlX3NhbXBsZXMod2luZG93X3NpemUsICJ0ZXN0LnR4dCIpOw0KICB0cmFpbl9zYW1wbGVzID0gY3JlYXRlX3NhbXBsZXMod2luZG93X3NpemUsInRyYWluLnR4dCIpOw0KICANCiAgdHJhaW5fc2FtcGxlc19Dbm90QyA9IGNyZWF0ZV9iaW5hcnlfc2FtcGxlcyh0cmFpbl9zYW1wbGVzLCAiQyIpOw0KICB0ZXN0X3NhbXBsZXNfQ25vdEMgPSBjcmVhdGVfYmluYXJ5X3NhbXBsZXModGVzdF9zYW1wbGVzLCAiQyIpOw0KICANCiAgdHJhaW5fc2FtcGxlc19Ibm90SCA9IGNyZWF0ZV9iaW5hcnlfc2FtcGxlcyh0cmFpbl9zYW1wbGVzLCAiSCIpOw0KICB0ZXN0X3NhbXBsZXNfSG5vdEggPSBjcmVhdGVfYmluYXJ5X3NhbXBsZXModGVzdF9zYW1wbGVzLCAiSCIpOw0KICANCiAgdHJhaW5fc2FtcGxlc0Vub3RFID0gY3JlYXRlX2JpbmFyeV9zYW1wbGVzKHRyYWluX3NhbXBsZXMsICJFIik7DQogIHRlc3Rfc2FtcGxlc0Vub3RFID0gY3JlYXRlX2JpbmFyeV9zYW1wbGVzKHRlc3Rfc2FtcGxlcywgIkUiKTsNCiAgDQpgYGANCg0KYGBge3J9DQpjb3JlbGF0aW9uPC1jb3IodHJhaW5fc2FtcGxlc19Dbm90Q1ssMjo0NDNdKQ0KbW9kZWw8LWdsbShhcy5mYWN0b3IoYmluYXJ5X2NsYXNzKX4uDQpgYGANCg0KYGBge3J9DQp4PXByZWRpY3QobW9kZWwsIHR5cGUgPSAicmVzcG9uc2UiKQ0KeCA8LSBpZmVsc2UoeCA+PSAwLjUsICJDIiwgIn5DIikNCg0KY3RhYl90cmFpbiA8LSB0YWJsZSh0cmFpbiRDbGFzcywgdHJhaW4kcHJlZF9jbGFzcykNCmN0YWJfdHJhaW4NCmBgYA0KDQpgYGB7LCBmYW1pbHk9Ymlub21pYWwsIGRhdGE9dHJhaW5fc2FtcGxlc19Dbm90Qyl9DQpzdW1tYXJ5KG1vZGVsKQ0KYGBgDQo=</div>
 
 
 

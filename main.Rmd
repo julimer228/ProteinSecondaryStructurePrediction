@@ -25,4 +25,18 @@ First, we need to load the data into the workspace
 ```
 
 ```{r}
+corelation<-cor(train_samples_CnotC[,2:443])
+model<-glm(as.factor(binary_class)~.
+```
+
+```{r}
+x=predict(model, type = "response")
+x <- ifelse(x >= 0.5, "C", "~C")
+
+ctab_train <- table(train$Class, train$pred_class)
+ctab_train
+```
+
+```{, family=binomial, data=train_samples_CnotC)}
+summary(model)
 ```
