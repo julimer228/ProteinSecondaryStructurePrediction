@@ -1758,22 +1758,11 @@ based on the Logistic Regression classifier.</p>
 <p>First, we need to load the data into the workspace</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4gIHdpbmRvd19zaXplPTIwO1xuICB0ZXN0X3NhbXBsZXMgPSBjcmVhdGVfc2FtcGxlcyh3aW5kb3dfc2l6ZSwgXCJ0ZXN0LnR4dFwiKTtcbiAgdHJhaW5fc2FtcGxlcyA9IGNyZWF0ZV9zYW1wbGVzKHdpbmRvd19zaXplLFwidHJhaW4udHh0XCIpO1xuICBcbiAgdHJhaW5fc2FtcGxlc19Dbm90QyA9IGNyZWF0ZV9iaW5hcnlfc2FtcGxlcyh0cmFpbl9zYW1wbGVzLCBcIkNcIik7XG4gIHRlc3Rfc2FtcGxlc19Dbm90QyA9IGNyZWF0ZV9iaW5hcnlfc2FtcGxlcyh0ZXN0X3NhbXBsZXMsIFwiQ1wiKTtcbiAgXG4gIHRyYWluX3NhbXBsZXNfSG5vdEggPSBjcmVhdGVfYmluYXJ5X3NhbXBsZXModHJhaW5fc2FtcGxlcywgXCJIXCIpO1xuICB0ZXN0X3NhbXBsZXNfSG5vdEggPSBjcmVhdGVfYmluYXJ5X3NhbXBsZXModGVzdF9zYW1wbGVzLCBcIkhcIik7XG4gIFxuICB0cmFpbl9zYW1wbGVzRW5vdEUgPSBjcmVhdGVfYmluYXJ5X3NhbXBsZXModHJhaW5fc2FtcGxlcywgXCJFXCIpO1xuVmlldyh0ZXN0X3NhbXBsZXMpXG4gIHRlc3Rfc2FtcGxlc0Vub3RFID0gY3JlYXRlX2JpbmFyeV9zYW1wbGVzKHRlc3Rfc2FtcGxlcywgXCJFXCIpO1xuICBcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG4gIHdpbmRvd19zaXplPTIwO1xuICB0ZXN0X3NhbXBsZXMgPSBjcmVhdGVfc2FtcGxlcyh3aW5kb3dfc2l6ZSwgXCJ0ZXN0LnR4dFwiKTtcbiAgdHJhaW5fc2FtcGxlcyA9IGNyZWF0ZV9zYW1wbGVzKHdpbmRvd19zaXplLFwidHJhaW4udHh0XCIpO1xuYGBgIn0= -->
 <pre class="r"><code>
   window_size=20;
   test_samples = create_samples(window_size, &quot;test.txt&quot;);
-  train_samples = create_samples(window_size,&quot;train.txt&quot;);
-  
-  train_samples_CnotC = create_binary_samples(train_samples, &quot;C&quot;);
-  test_samples_CnotC = create_binary_samples(test_samples, &quot;C&quot;);
-  
-  train_samples_HnotH = create_binary_samples(train_samples, &quot;H&quot;);
-  test_samples_HnotH = create_binary_samples(test_samples, &quot;H&quot;);
-  
-  train_samplesEnotE = create_binary_samples(train_samples, &quot;E&quot;);
-View(test_samples)
-  test_samplesEnotE = create_binary_samples(test_samples, &quot;E&quot;);
-  </code></pre>
+  train_samples = create_samples(window_size,&quot;train.txt&quot;);</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->

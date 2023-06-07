@@ -11,7 +11,7 @@ orthogonally_encoding<-function(sequence){
                    "R", "S", "T", "V", "W", "Y");
   
   # initialize the matrix
-  encoded_sequence <- matrix(0, nrow = nchar(sequence), ncol = length(amino_acids+1))# +1 because of the "_"
+  encoded_sequence <- matrix(0, nrow = nchar(sequence), ncol = length(amino_acids)+1)# +1 because of the "_"
   
   for (i in 1:nchar(sequence)) {
     aa <- substring(sequence, i, i)
@@ -48,6 +48,7 @@ create_window<-function(protein, index, window_size){
      extended_left=gsub(',','',extended_left);
      extended_left=gsub(' ','',extended_left);
   }
+  
   stop<-index+range;
   if(stop>protein_length){
     extended_right =toString(rep(extension_char, stop-protein_length+1), collapse = NULL);
@@ -55,7 +56,10 @@ create_window<-function(protein, index, window_size){
     extended_right=gsub(' ','',extended_right);
   }
   
-  
+  if(start<1){
+    index = index+abs(start)+1;
+    stop=stop+abs(start)+1;
+  }
   
   temp_protein <-paste0(extended_left,protein,extended_right);
   window<-substring(temp_protein,start, stop);
@@ -66,24 +70,24 @@ create_window<-function(protein, index, window_size){
 
 sample_data<-function(protein, second_lv_struct, window_size){
   
-  sample_list<-data.frame();
-  sample<-NULL;
+  samples_df<-data.frame();
+  current<-NULL;
   
   for(i in 1:nchar(protein)){
     
     window<-create_window(protein,i,window_size);
-    encoded<-data.frame(orthogonally_encoding(window));
+    encoded<-((orthogonally_encoding(window)));
     struct_str<-substring(second_lv_struct,i,i);
-    
+   
     current<-data.frame(
-    encoded,
-    struct_str
-    )
+      struct_str<-struct_str,
+      encoded<-t(as.vector(encoded))
+    ) 
     
-    sample_list<-rbind(current,sample_list);
+    samples_df<-rbind(current,samples_df);
   }
-  
-  return(sample_list);
+
+  return(samples_df);
 }
 
 
@@ -170,10 +174,10 @@ create_binary_samples<-function(data, className){
     row = data[i,];
     general_class = row$struct_str;
     if(general_class==className){
-      binary_class=className;
+      binary_class=1;
     }
     else{
-      binary_class=paste0("~",className);
+      binary_class=-1;
     }
     
     current = data.frame(row, binary_class);
@@ -184,29 +188,4 @@ create_binary_samples<-function(data, className){
 }
 
 
-fit_logistic_regression <- function(train_data, test_data, response_var) {
-  # Prepare the data for glmnet
-  x_train <- as.matrix(train_data[, -which(names(train_data) == response_var)])
-  y_train <- as.factor(train_data[[response_var]])
-  x_test <- as.matrix(test_data[, -which(names(test_data) == response_var)])
-  y_test <- as.factor(test_data[[response_var]])
-  
-  # Fit the logistic regression model
-  model <- glmnet(x_train, y_train, family = "binomial", alpha = 0.5)
-  
-  # Predict on the test set
-  predictions <- predict(model, x_test, type = "response", s = 0.1)
-  predicted_classes <- ifelse(predictions > 0.5, levels(y_train)[2], levels(y_train)[1])
-  
-  # Calculate accuracy
-  accuracy <- mean(predicted_classes == y_test)
-  
-  return(list(model = model, accuracy = accuracy))
-}
-
-## library(ggplot2)
-# x$binary_class=as.factor(x$binary_class);
-# ggplot(x, aes(struct_str, fill = binary_class)) +
-#   geom_bar() +
-#   coord_flip()
 
