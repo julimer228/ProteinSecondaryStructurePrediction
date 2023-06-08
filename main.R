@@ -183,6 +183,7 @@ create_binary_samples_OVR<-function(data, className){
     binary_data=rbind(current, binary_data);
   }  
   
+ 
   return(binary_data);
 }
 
@@ -206,14 +207,19 @@ create_binary_samples_OVO<-function(data, className1, className2){
     binary_data=rbind(current, binary_data);
     }
   }  
-  
+
   return(binary_data);
 }
 
 
 create_binary_model<-function(dataset){
+  control <- glm.control(maxit = 50, epsilon = 1e-5)
   df=dataset[,3:ncol(dataset)];
-  model<-glm(as.factor(dataset$binary_class)~., family = binomial(), df)
+  model<-glm(as.factor(dataset$binary_class)~., family = binomial(), df, control=control);
+}
+
+create_hierarchical_classificator<-function(dataset, model1, model2){
+  
 }
 
 

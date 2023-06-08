@@ -9,11 +9,13 @@ First, we need to load the data into the workspace
 
 ```{r}
 
-  window_size=20;
+  window_size=13;
   
   # prepare samples
-  test_samples = create_samples(window_size, "test.txt");
-  train_samples = create_samples(window_size,"train.txt");
+  
+```
+
+```{train_samples = create_samples(window_size,"train.txt");}
   
   train_samples_CnotC = create_binary_samples_OVR(train_samples,"C");
   test_samples_CnotC = create_binary_samples_OVR(test_samples,"C");
@@ -51,6 +53,9 @@ First, we need to load the data into the workspace
 ```{r}
 test_samples_CnotC$pred_class <- predict(
   model_CnotC, test_samples_CnotC,type = "response");
+test_samples_CnotC$pred_class <- ifelse(
+  test_samples_CnotC$pred_class >= 0.5, "1", "-1");
+
 
 test_samples_EnotE$pred_class <- predict(
   model_EnotE, test_samples_EnotE,type = "response");
@@ -89,6 +94,40 @@ accuracy_test_HnotH <- sum(diag(ctab_test_HnotH))/sum(ctab_test_HnotH)*100;
 accuracy_test_EnotE <- sum(diag(ctab_test_EnotE))/sum(ctab_test_EnotE )*100;
 accuracy_test_CE <- sum(diag(ctab_test_CE))/sum(ctab_test_CE)*100;
 accuracy_test_HE <- sum(diag(ctab_test_HE))/sum(ctab_test_HE)*100;
-accuracy_test_CE <- sum(diag(ctab_test_CE))/sum(ctab_test_CE )*100
+accuracy_test_CH <- sum(diag(ctab_test_CH))/sum(ctab_test_CH )*100
 
+
+# run hierarchical classifier
+
+```
+
+```{r}
+data = create_samples(window_size, "test.txt")
+
+# one vs rest
+data$pred_class_EnotE <- predict(
+  model_EnotE, data[,2:274],type = "response");
+
+data$pred_class_CnotC <- predict(
+  model_CnotC, data[,2:274],type = "response");
+
+data$pred_class_HnotH <- predict(
+  model_HnotH, data[,2:274],type = "response");
+
+data$pred_class=" ";
+# combine results
+data$pred_class <- ifelse(data$pred_class_EnotE > data$pred_class_CnotC,ifelse(
+  data$pred_class_EnotE > data$pred_class_HnotH,"E",data$pred_class
+), data$pred_class);
+
+data$pred_class <- ifelse(data$pred_class_HnotH > data$pred_class_EnotE,ifelse(
+  data$pred_class_HnotH > data$pred_class_CnotC,"H",data$pred_class
+), data$pred_class);
+
+data$pred_class <- ifelse(data$pred_class_CnotC > data$pred_class_HnotH,ifelse(
+  data$pred_class_CnotC > data$pred_class_EnotE,"C",data$pred_class
+), data$pred_class);
+
+data_tab <- table(data[,2], data$pred_class)
+accuracy <- sum(diag(data_tab))/sum(data_tab)*100
 ```
