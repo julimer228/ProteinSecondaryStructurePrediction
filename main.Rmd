@@ -10,33 +10,48 @@ First, we need to load the data into the workspace
 ```{r}
 
   window_size=20;
+  
+  # prepare samples
   test_samples = create_samples(window_size, "test.txt");
   train_samples = create_samples(window_size,"train.txt");
   
-  train_samples_CnotC = create_binary_samples(train_samples, "C");
-  test_samples_CnotC = create_binary_samples(test_samples, "C");
+  train_samples_CnotC = create_binary_samples(train_samples,"C");
+  test_samples_CnotC = create_binary_samples(test_samples,"C");
   
   train_samples_HnotH = create_binary_samples(train_samples, "H");
   test_samples_HnotH = create_binary_samples(test_samples, "H");
   
-  train_samplesEnotE = create_binary_samples(train_samples, "E");
-  test_samplesEnotE = create_binary_samples(test_samples, "E");
-  
+  train_samples_EnotE = create_binary_samples(train_samples, "E");
+  test_samples_EnotE = create_binary_samples(test_samples, "E");
+
 ```
 
 ```{r}
-corelation<-cor(train_samples_CnotC[,2:443])
-model<-glm(as.factor(binary_class)~.
+
+  # train binary models
+  model_CnotC<-create_binary_model(train_samples_CnotC);
+  model_HnotH<-create_binary_model(train_samples_HnotH);
+  model_EnotE<-create_binary_model(train_samples_EnotE)
 ```
 
 ```{r}
-x=predict(model, type = "response")
-x <- ifelse(x >= 0.5, "C", "~C")
 
-ctab_train <- table(train$Class, train$pred_class)
-ctab_train
-```
+test_samples_CnotC$pred_class <- predict(model_CnotC, test_samples_CnotC,type = "response");
+test_samples_CnotC$pred_class <- ifelse(test_samples_CnotC$pred_class >= 0.5, "1", "-1");
 
-```{, family=binomial, data=train_samples_CnotC)}
-summary(model)
+test_samples_EnotE$pred_class <- predict(model_EnotE, test_samples_EnotE,type = "response");
+test_samples_EnotE$pred_class <- ifelse(test_samples_EnotE$pred_class >= 0.5, "1", "-1");
+
+test_samples_HnotH$pred_class <- predict(model_HnotH, test_samples_HnotH,type = "response");
+test_samples_HnotH$pred_class <- ifelse(test_samples_HnotH$pred_class >= 0.5, "1", "-1");
+
+
+ctab_test_CnotC <- table(test_samples_CnotC$binary_class, test_samples_CnotC$pred_class);
+ctab_test_HnotH <- table(test_samples_HnotH$binary_class, test_samples_HnotH$pred_class);
+ctab_test_EnotE <- table(test_samples_EnotE$binary_class, test_samples_EnotE$pred_class);
+
+accuracy_test_CnotC <- sum(diag(ctab_test_CnotC))/sum(ctab_test_CnotC)*100;
+accuracy_test_HnotH <- sum(diag(ctab_test_HnotH))/sum(ctab_test_HnotH)*100;
+accuracy_test_EnotE <- sum(diag(ctab_test_EnotE))/sum(ctab_test_EnotE )*100
+
 ```
