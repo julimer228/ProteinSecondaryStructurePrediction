@@ -1,7 +1,6 @@
 
 library(stringr)
 library(glmnet) # for logistic regression and Lasso and Elastic-Net Regularized Generalized Linear Models
-library(caret) #contains functions to streamline the model training process for complex regression and classification problems
 
 # function to orthogonally encode the sequence
 # We add X (unknown aminoacid) as a new class 
@@ -167,7 +166,7 @@ create_binary_classifier<-function(test_filepath, train_filepath, window_size){
   
 }
 
-create_binary_samples<-function(data, className){
+create_binary_samples_OVR<-function(data, className){
   
   binary_data<-data.frame();
   for(i in 1:nrow(data)){
@@ -187,11 +186,36 @@ create_binary_samples<-function(data, className){
   return(binary_data);
 }
 
+create_binary_samples_OVO<-function(data, className1, className2){
+  
+  binary_data<-data.frame();
+  for(i in 1:nrow(data)){
+    row = data[i,];
+    general_class = row$struct_str;
+    if(general_class==className1){
+      binary_class=1;
+    }
+    else if(general_class==className2){
+      binary_class=-1;
+    }
+    else{
+      binary_class=0;
+    }
+    if(binary_class!=0){
+    current = data.frame(binary_class,row);
+    binary_data=rbind(current, binary_data);
+    }
+  }  
+  
+  return(binary_data);
+}
+
 
 create_binary_model<-function(dataset){
   df=dataset[,3:ncol(dataset)];
   model<-glm(as.factor(dataset$binary_class)~., family = binomial(), df)
 }
+
 
 
 

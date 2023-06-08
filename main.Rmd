@@ -15,43 +15,80 @@ First, we need to load the data into the workspace
   test_samples = create_samples(window_size, "test.txt");
   train_samples = create_samples(window_size,"train.txt");
   
-  train_samples_CnotC = create_binary_samples(train_samples,"C");
-  test_samples_CnotC = create_binary_samples(test_samples,"C");
+  train_samples_CnotC = create_binary_samples_OVR(train_samples,"C");
+  test_samples_CnotC = create_binary_samples_OVR(test_samples,"C");
   
-  train_samples_HnotH = create_binary_samples(train_samples, "H");
-  test_samples_HnotH = create_binary_samples(test_samples, "H");
+  train_samples_HnotH = create_binary_samples_OVR(train_samples, "H");
+  test_samples_HnotH = create_binary_samples_OVR(test_samples, "H");
   
-  train_samples_EnotE = create_binary_samples(train_samples, "E");
-  test_samples_EnotE = create_binary_samples(test_samples, "E");
+  train_samples_EnotE = create_binary_samples_OVR(train_samples, "E");
+  test_samples_EnotE = create_binary_samples_OVR(test_samples, "E");
+  
+  train_samples_HE = create_binary_samples_OVO(train_samples,"H","E");
+  test_samples_HE = create_binary_samples_OVO(test_samples,"H","E");
+  
+  train_samples_CE = create_binary_samples_OVO(train_samples,"C","E");
+  test_samples_CE = create_binary_samples_OVO(test_samples,"C","E");
+  
+  train_samples_CH = create_binary_samples_OVO(train_samples,"C","H");
+  test_samples_CH = create_binary_samples_OVO(test_samples,"C","H");
 
 ```
 
 ```{r}
 
-  # train binary models
+  # train binary models One vs rest
   model_CnotC<-create_binary_model(train_samples_CnotC);
   model_HnotH<-create_binary_model(train_samples_HnotH);
-  model_EnotE<-create_binary_model(train_samples_EnotE)
+  model_EnotE<-create_binary_model(train_samples_EnotE);
+  
+  # train models one vs one
+  model_CE<-create_binary_model(train_samples_CE);
+  model_HE<-create_binary_model(train_samples_HE);
+  model_CH<-create_binary_model(train_samples_CH);
 ```
 
 ```{r}
+test_samples_CnotC$pred_class <- predict(
+  model_CnotC, test_samples_CnotC,type = "response");
 
-test_samples_CnotC$pred_class <- predict(model_CnotC, test_samples_CnotC,type = "response");
-test_samples_CnotC$pred_class <- ifelse(test_samples_CnotC$pred_class >= 0.5, "1", "-1");
+test_samples_EnotE$pred_class <- predict(
+  model_EnotE, test_samples_EnotE,type = "response");
+test_samples_EnotE$pred_class <- ifelse(
+  test_samples_EnotE$pred_class >= 0.5, "1", "-1");
 
-test_samples_EnotE$pred_class <- predict(model_EnotE, test_samples_EnotE,type = "response");
-test_samples_EnotE$pred_class <- ifelse(test_samples_EnotE$pred_class >= 0.5, "1", "-1");
+test_samples_HnotH$pred_class <- predict(
+  model_HnotH, test_samples_HnotH,type = "response");
+test_samples_HnotH$pred_class <- ifelse(
+  test_samples_HnotH$pred_class >= 0.5, "1", "-1");
 
-test_samples_HnotH$pred_class <- predict(model_HnotH, test_samples_HnotH,type = "response");
-test_samples_HnotH$pred_class <- ifelse(test_samples_HnotH$pred_class >= 0.5, "1", "-1");
+test_samples_CH$pred_class <- predict(
+  model_CH, test_samples_CH,type = "response");
+test_samples_CH$pred_class <- ifelse(
+  test_samples_CH$pred_class >= 0.5, "1", "-1");
 
+test_samples_CE$pred_class <- predict(
+  model_CE, test_samples_CE,type = "response");
+test_samples_CE$pred_class <- ifelse(
+  test_samples_CE$pred_class >= 0.5, "1", "-1");
+
+test_samples_HE$pred_class <- predict(
+  model_HE, test_samples_HE,type = "response");
+test_samples_HE$pred_class <- ifelse(
+  test_samples_HE$pred_class >= 0.5, "1", "-1");
 
 ctab_test_CnotC <- table(test_samples_CnotC$binary_class, test_samples_CnotC$pred_class);
 ctab_test_HnotH <- table(test_samples_HnotH$binary_class, test_samples_HnotH$pred_class);
 ctab_test_EnotE <- table(test_samples_EnotE$binary_class, test_samples_EnotE$pred_class);
+ctab_test_CE <- table(test_samples_CE$binary_class, test_samples_CE$pred_class);
+ctab_test_CH <- table(test_samples_CH$binary_class, test_samples_CH$pred_class);
+ctab_test_HE <- table(test_samples_HE$binary_class, test_samples_HE$pred_class);
 
 accuracy_test_CnotC <- sum(diag(ctab_test_CnotC))/sum(ctab_test_CnotC)*100;
 accuracy_test_HnotH <- sum(diag(ctab_test_HnotH))/sum(ctab_test_HnotH)*100;
-accuracy_test_EnotE <- sum(diag(ctab_test_EnotE))/sum(ctab_test_EnotE )*100
+accuracy_test_EnotE <- sum(diag(ctab_test_EnotE))/sum(ctab_test_EnotE )*100;
+accuracy_test_CE <- sum(diag(ctab_test_CE))/sum(ctab_test_CE)*100;
+accuracy_test_HE <- sum(diag(ctab_test_HE))/sum(ctab_test_HE)*100;
+accuracy_test_CE <- sum(diag(ctab_test_CE))/sum(ctab_test_CE )*100
 
 ```
