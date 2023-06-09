@@ -128,6 +128,6 @@ data$pred_class <- ifelse(data$pred_class_CnotC > data$pred_class_HnotH,ifelse(
   data$pred_class_CnotC > data$pred_class_EnotE,"C",data$pred_class
 ), data$pred_class);
 
-data_tab <- table(data[,2], data$pred_class)
+data_tab <- table(data[,1], data$pred_class)
 accuracy <- sum(diag(data_tab))/sum(data_tab)*100
 ```
