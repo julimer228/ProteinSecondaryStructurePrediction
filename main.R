@@ -1,7 +1,8 @@
 
 library(stringr)
 library(glmnet) # for logistic regression and Lasso and Elastic-Net Regularized Generalized Linear Models
-
+library(parallel) 
+library(doParallel)
 # function to orthogonally encode the sequence
 # We add X (unknown aminoacid) as a new class 
 # @input - sequence - original sequence
@@ -95,9 +96,21 @@ sample_protein<-function(protein, second_lv_struct, window_size){
     window<-create_window(protein,i,window_size);
     encoded<-((orthogonally_encoding(window)));
     struct_str<-substring(second_lv_struct,i,i);
+    HnotH<-ifelse(struct_str=="H", 1,-1);
+    EnotE<-ifelse(struct_str=="E", 1,-1);
+    CnotC<-ifelse(struct_str=="C", 1,-1);
+    HE<-ifelse(struct_str=="H", 1, ifelse(struct_str=="E",-1, 0));
+    EC<-ifelse(struct_str=="E", 1,ifelse(struct_str=="C",-1, 0));
+    CH<-ifelse(struct_str=="C", 1,ifelse(struct_str=="H",-1, 0));
     
     current<-data.frame(
       struct_str<-struct_str,
+      HnotH<-HnotH,
+      EnotE<-EnotE,
+      CnotC<-CnotC,
+      HE<-HE,
+      EC<-EC,
+      CH<-CH,
       encoded<-t(as.vector(encoded))
     ) 
     
@@ -152,74 +165,21 @@ create_samples<-function(window_size, filepath){
   protein_data = read_protein_data(filepath);
   samples <- data.frame(); # initialize variables
   
-  # create samples 
-  for(i in 1:length(protein_data)){
-    current = protein_data[i,];
+  
+  cl <- makeCluster(12);  # Tworzy klaster z 12 rdzeniami procesora
+  registerDoParallel(cl);
+  clusterExport(cl=cl, c('sample_protein', 'create_window','orthogonally_encoding'));
+  
+  samples <-foreach(i = 1:nrow(protein_data), .combine = rbind) %dopar% {
+    current = protein_data[i, ]
     protein = current$sequence;
     second_lv_struct = current$sec_lvl_struct;
-    
     sample =data.frame(sample_protein(protein, second_lv_struct, window_size));
-    samples=rbind(sample,samples);
+    sample;
   }
+  
+  stopCluster(cl);
   return(samples);
-}
-
-
-# The function to create the samples for one vs rest binary classifier
-# @input - data - sampled protein data
-# @input - classname - the name of the class (for instance "H")
-# @return - binary_data - the encoded data
-# @warning - the target values are 1 if class is the same as the classname
-#            and (-1) if it is different
-create_binary_samples_OVR<-function(data, className){
-  
-  binary_data<-data.frame();
-  for(i in 1:nrow(data)){
-    row = data[i,];
-    general_class = row$struct_str;
-    if(general_class==className){
-      binary_class=1;
-    }
-    else{
-      binary_class=-1;
-    }
-    current = data.frame(binary_class,row);
-    binary_data=rbind(current, binary_data);
-  }  
-  
-  return(binary_data);
-}
-
-# The function to create the samples for one vs one binary classifier
-# @input - data - sampled protein data
-# @input - className1 - the name of the first class (for instance "H")
-# @input - className2 - the name of the second class (for instance "E")
-# @return - binary_data - the encoded data
-# @warning - the target values are 1 if class is the same as the className1
-#            and (-1) if it is the same as the className2, other classes are
-#            not added to the data
-create_binary_samples_OVO<-function(data, className1, className2){
-  
-  binary_data<-data.frame();
-  for(i in 1:nrow(data)){
-    row = data[i,];
-    general_class = row$struct_str;
-    if(general_class==className1){
-      binary_class=1;
-    }
-    else if(general_class==className2){
-      binary_class=-1;
-    }
-    else{
-      binary_class=0;
-    }
-    if(binary_class!=0){
-      current = data.frame(binary_class,row);
-      binary_data=rbind(current, binary_data);
-    }
-  }  
-  
-  return(binary_data);
 }
 
 # The function to create the binary model (logisitic regression)
@@ -227,10 +187,10 @@ create_binary_samples_OVO<-function(data, className1, className2){
 # @input - maxit - the max number of interations
 # @input - epsilon - the epsilon parameter
 # @output - model - the trained logisitic regression model
-create_binary_model<-function(dataset, maxit=80, epsilon=1e-6){
+create_binary_model<-function(dataset,target_col, maxit=80, epsilon=1e-6){
   control <- glm.control(maxit = maxit, epsilon = epsilon)
-  df=dataset[,3:ncol(dataset)];
-  model<-glm(as.factor(dataset$binary_class)~., family = binomial(), df);
+  df=dataset[,8:ncol(dataset)];
+  model<-glm(as.factor(target_col)~., family = binomial(), data = df);
   return(model);
 }
 
@@ -238,8 +198,6 @@ create_binary_model<-function(dataset, maxit=80, epsilon=1e-6){
 # @input - filepath - the filepath for the result file
 # @input - dataframe - the dataframe which column will be saved
 save_dataframe<-function(filepath, dataframe){
-  
-  # Zapisywanie kolumny "Imię" do pliku tekstowego za pomocą write.table()
   write.table(dataframe$pred_class, filepath, row.names = FALSE, col.names = FALSE)
 }
 
@@ -271,4 +229,20 @@ save_all_as_fasta<-function(filepath){
     res<-save_as_fasta(line);
   }
   
+}
+
+model_predict<-function(model, data){
+  cl <- makeCluster(12);  
+  registerDoParallel(cl);
+  
+  samples <-foreach(i = 1:nrow(data), .combine = rbind) %dopar% {
+      pred_class <- predict(
+      model, data[,8:ncol(data)],type = "response");
+      pred_class <- ifelse(
+      pred_class >= 0.5, "1", "-1");
+      pred_class
+  }
+  
+  stopCluster(cl);
+  return(data);
 }

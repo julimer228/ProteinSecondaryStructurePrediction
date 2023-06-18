@@ -1,7 +1,8 @@
 # History files
 .Rhistory
 .Rapp.history
-
+.csv
+.rds
 # Session Data files
 .RData
 .RDataTmp
