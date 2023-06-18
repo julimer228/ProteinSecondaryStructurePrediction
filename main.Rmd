@@ -60,17 +60,50 @@ test_samples$pred_class_CnotC <- predict(
 
 ```{r}
 # Train model
-  train_samplesHE11 <-train_samples[train_samples$HE....HE == 0, ]
+  train_samplesHE11 <-train_samples[train_samples$HE....HE != 0, ]
   model_HE<-create_binary_model(train_samples,train_samples$HE....HE);
   saveRDS(model_HE, "model_HE11.rds");
 # H/E
- test_samples$pred_class_HE <- predict(
-   model_HE, test_samples[,8:ncol(test_samples)],type = "response");
- test_samples$pred_class_HE <- ifelse(
-   test_samples$pred_class_HE >= 0.5, "1", "-1");
+ test_samplesHE11 <-test_samples[test_samples$HE....HE != 0, ]
+ test_samplesHE11$pred_class_HE <- predict(
+   model_HE, test_samplesHE11[,8:ncol(test_samplesHE11)],type = "response");
+test_samplesHE11$pred_class_HE <- ifelse(
+   test_samplesHE11$pred_class_HE >= 0.5, "1", "-1");
  
-  ctab_test_HE <- table(test_samples$HE....HE, test_samples$pred_class_HE);
+  ctab_test_HE <- table(test_samplesHE11$HE....HE, test_samplesHE11$pred_class_HE);
   accuracy_test_HE <- sum(diag(ctab_test_HE))/sum(ctab_test_HE)*100
+```
+
+```{r}
+# Train model
+  train_samplesEC <-train_samples[train_samples$EC....EC != 0, ]
+  model_EC<-create_binary_model(train_samples,train_samples$EC....EC);
+  saveRDS(model_EC, "model_EC11.rds");
+# C/E
+ test_samplesEC <-test_samples[test_samples$EC....EC != 0, ]
+ test_samplesEC$pred_class_EC <- predict(
+   model_EC, test_samplesEC[,8:ncol(test_samplesEC)],type = "response");
+test_samplesEC$pred_class_EC <- ifelse(
+   test_samplesEC$pred_class_EC >= 0.5, "1", "-1");
+ 
+  ctab_test_EC <- table(test_samplesEC$EC....EC, test_samplesEC$pred_class_EC);
+  accuracy_test_EC <- sum(diag(ctab_test_EC))/sum(ctab_test_EC)*100
+```
+
+```{r}
+# Train model
+  train_samplesCH <-train_samples[train_samples$CH....CH != 0, ]
+  model_CH<-create_binary_model(train_samples,train_samples$CH....CH);
+  saveRDS(model_CH, "model_CH11.rds");
+# C/H
+ test_samplesCH <-test_samples[test_samples$CH....CH != 0, ]
+ test_samplesCH$pred_class_CH <- predict(
+   model_CH, test_samplesCH[,8:ncol(test_samplesCH)],type = "response");
+test_samplesCH$pred_class_CH <- ifelse(
+   test_samplesCH$pred_class_CH >= 0.5, "1", "-1");
+ 
+  ctab_test_CH <- table(test_samplesCH$CH....CH, test_samplesCH$pred_class_CH);
+  accuracy_test_CH <- sum(diag(ctab_test_CH))/sum(ctab_test_CH)*100
 ```
 
 ```{r}
