@@ -18,7 +18,7 @@ output: html_notebook
 ```{r}
 # Train model
   model_CnotC<-create_binary_model(train_samples,train_samples$CnotC....CnotC);
-   saveRDS(model_CnotC, "model_CnotC11.rds");
+   saveRDS(model_CnotC, "model_CnotC13.rds");
 # Evaluate binary classifiers
 # C/~C
 test_samples$pred_class_CnotC <- predict(
@@ -33,7 +33,7 @@ test_samples$pred_class_CnotC <- predict(
 ```{r}
 # Train model
   model_HnotH<-create_binary_model(train_samples,train_samples$HnotH....HnotH);
-  saveRDS(model_HnotH, "model_HnotH11.rds");
+  saveRDS(model_HnotH, "model_HnotH13.rds");
 # H/~H
  test_samples$pred_class_HnotH <- predict(
    model_HnotH, test_samples[,8:ncol(test_samples)],type = "response");
@@ -47,7 +47,7 @@ test_samples$pred_class_CnotC <- predict(
 ```{r}
 # Train model
   model_EnotE<-create_binary_model(train_samples,train_samples$EnotE....EnotE);
-  saveRDS(model_EnotE, "model_EnotE11.rds");
+  saveRDS(model_EnotE, "model_EnotE13.rds");
 # E/~E
  test_samples$pred_class_EnotE <- predict(
    model_EnotE, test_samples[,8:ncol(test_samples)],type = "response");
@@ -60,26 +60,26 @@ test_samples$pred_class_CnotC <- predict(
 
 ```{r}
 # Train model
-  train_samplesHE11 <-train_samples[train_samples$HE....HE != 0, ]
-  model_HE<-create_binary_model(train_samples,train_samples$HE....HE);
-  saveRDS(model_HE, "model_HE11.rds");
+  train_samplesHE <-train_samples[train_samples$HE....HE != 0, ]
+  model_HE<-create_binary_model(train_samplesHE,train_samplesHE$HE....HE);
+  saveRDS(model_HE, "model_HE13v2.rds");
 # H/E
- test_samplesHE11 <-test_samples[test_samples$HE....HE != 0, ]
- test_samplesHE11$pred_class_HE <- predict(
-   model_HE, test_samplesHE11[,8:ncol(test_samplesHE11)],type = "response");
-test_samplesHE11$pred_class_HE <- ifelse(
-   test_samplesHE11$pred_class_HE >= 0.5, "1", "-1");
+ test_samplesHE <-test_samples[test_samples$HE....HE != 0, ]
+ test_samplesHE$pred_class_HE <- predict(
+   model_HE, test_samplesHE[,8:ncol(test_samplesHE)],type = "response");
+test_samplesHE$pred_class_HE <- ifelse(
+   test_samplesHE$pred_class_HE >= 0.5, "1", "-1");
  
-  ctab_test_HE <- table(test_samplesHE11$HE....HE, test_samplesHE11$pred_class_HE);
+  ctab_test_HE <- table(test_samplesHE$HE....HE, test_samplesHE$pred_class_HE);
   accuracy_test_HE <- sum(diag(ctab_test_HE))/sum(ctab_test_HE)*100
 ```
 
 ```{r}
 # Train model
   train_samplesEC <-train_samples[train_samples$EC....EC != 0, ]
-  model_EC<-create_binary_model(train_samples,train_samples$EC....EC);
-  saveRDS(model_EC, "model_EC11.rds");
-# C/E
+  model_EC<-create_binary_model(train_samplesEC,train_samplesEC$EC....EC);
+  saveRDS(model_EC, "model_EC.rds");
+# E/C
  test_samplesEC <-test_samples[test_samples$EC....EC != 0, ]
  test_samplesEC$pred_class_EC <- predict(
    model_EC, test_samplesEC[,8:ncol(test_samplesEC)],type = "response");
@@ -93,8 +93,8 @@ test_samplesEC$pred_class_EC <- ifelse(
 ```{r}
 # Train model
   train_samplesCH <-train_samples[train_samples$CH....CH != 0, ]
-  model_CH<-create_binary_model(train_samples,train_samples$CH....CH);
-  saveRDS(model_CH, "model_CH11.rds");
+  model_CH<-create_binary_model(train_samplesCH,train_samples$CH....CH);
+  saveRDS(model_CH, "model_CH13.rds");
 # C/H
  test_samplesCH <-test_samples[test_samples$CH....CH != 0, ]
  test_samplesCH$pred_class_CH <- predict(

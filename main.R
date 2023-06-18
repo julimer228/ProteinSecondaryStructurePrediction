@@ -231,18 +231,3 @@ save_all_as_fasta<-function(filepath){
   
 }
 
-model_predict<-function(model, data){
-  cl <- makeCluster(12);  
-  registerDoParallel(cl);
-  
-  samples <-foreach(i = 1:nrow(data), .combine = rbind) %dopar% {
-      pred_class <- predict(
-      model, data[,8:ncol(data)],type = "response");
-      pred_class <- ifelse(
-      pred_class >= 0.5, "1", "-1");
-      pred_class
-  }
-  
-  stopCluster(cl);
-  return(data);
-}
