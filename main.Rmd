@@ -3,17 +3,25 @@ title: "The Protein Secondary Structure Prediction"
 output: html_notebook
 ---
 
+Choose the window size
+
 ```{r}
   #Set the window size 
   window_size=11;
   
 ```
 
+Use window sliding scheme and perform orthogonal encoding
+
 ```{r}
   # Create samples
   train_samples = create_samples(window_size,"datasets/train.txt");
   test_samples = create_samples(window_size, "datasets/test.txt");
 ```
+
+## Binary classifiers One vs Rest - training and model evaluation
+
+Train C/\~C binary classifier, predict scores on the test data set, calculate accuracy
 
 ```{r}
 # Train model
@@ -30,6 +38,8 @@ test_samples$pred_class_CnotC <- predict(
   accuracy_test_CnotC <- sum(diag(ctab_test_CnotC))/sum(ctab_test_CnotC)*100
 ```
 
+Train H/\~H binary classifier, predict scores on the test data set, calculate accuracy
+
 ```{r}
 # Train model
   model_HnotH<-create_binary_model(train_samples,train_samples$HnotH....HnotH);
@@ -43,6 +53,8 @@ test_samples$pred_class_CnotC <- predict(
   ctab_test_HnotH <- table(test_samples$HnotH....HnotH, test_samples$pred_class_HnotH);
   accuracy_test_HnotH <- sum(diag(ctab_test_HnotH))/sum(ctab_test_HnotH)*100
 ```
+
+Train E/\~E binary classifier, predict scores on the test data set, calculate accuracy
 
 ```{r}
 # Train model
@@ -58,11 +70,15 @@ test_samples$pred_class_CnotC <- predict(
   accuracy_test_EnotE <- sum(diag(ctab_test_EnotE))/sum(ctab_test_EnotE)*100
 ```
 
+## Binary classifiers One vs One - training and model evaluation
+
+Train H/E binary classifier, predict scores on the test data set, calculate accuracy
+
 ```{r}
 # Train model
   train_samplesHE <-train_samples[train_samples$HE....HE != 0, ]
   model_HE<-create_binary_model(train_samplesHE,train_samplesHE$HE....HE);
-  saveRDS(model_HE, "model_HE13v2.rds");
+  saveRDS(model_HE, "model_HE7.rds");
 # H/E
  test_samplesHE <-test_samples[test_samples$HE....HE != 0, ]
  test_samplesHE$pred_class_HE <- predict(
@@ -74,11 +90,13 @@ test_samplesHE$pred_class_HE <- ifelse(
   accuracy_test_HE <- sum(diag(ctab_test_HE))/sum(ctab_test_HE)*100
 ```
 
+Train E/C binary classifier, predict scores on the test data set, calculate accuracy
+
 ```{r}
 # Train model
   train_samplesEC <-train_samples[train_samples$EC....EC != 0, ]
   model_EC<-create_binary_model(train_samplesEC,train_samplesEC$EC....EC);
-  saveRDS(model_EC, "model_EC.rds");
+  saveRDS(model_EC, "model_EC7.rds");
 # E/C
  test_samplesEC <-test_samples[test_samples$EC....EC != 0, ]
  test_samplesEC$pred_class_EC <- predict(
@@ -90,11 +108,13 @@ test_samplesEC$pred_class_EC <- ifelse(
   accuracy_test_EC <- sum(diag(ctab_test_EC))/sum(ctab_test_EC)*100
 ```
 
+Train C/H binary classifier, predict scores on the test data set, calculate accuracy
+
 ```{r}
 # Train model
   train_samplesCH <-train_samples[train_samples$CH....CH != 0, ]
-  model_CH<-create_binary_model(train_samplesCH,train_samples$CH....CH);
-  saveRDS(model_CH, "model_CH13.rds");
+  model_CH<-create_binary_model(train_samplesCH,train_samplesCH$CH....CH);
+  saveRDS(model_CH, "model_CH7.rds");
 # C/H
  test_samplesCH <-test_samples[test_samples$CH....CH != 0, ]
  test_samplesCH$pred_class_CH <- predict(
@@ -106,18 +126,29 @@ test_samplesCH$pred_class_CH <- ifelse(
   accuracy_test_CH <- sum(diag(ctab_test_CH))/sum(ctab_test_CH)*100
 ```
 
+## 
+Tertiary classifiers
+
+```{r} # load models (window size 13)}
+model_EnotE <- readRDS("model_EnotE13.rds")
+model_CnotC <- readRDS("model_CnotC13.rds")
+model_HnotH <- readRDS("model_HnotH13.rds")
+data <- test_samples
+```
+
+### 
+Classifier based on three one-versus-one classifiers (C/∼C & E/∼E & H/∼H)
+
 ```{r}
-# Tertiary classifier
-data = create_samples(window_size, "datasets/test.txt")
 # one vs rest (H/~H & E/~E & C/~C)
 data$pred_class_EnotE <- predict(
-  model_EnotE, data[,2:ncol(data)],type = "response");
+  model_EnotE, data[,8:ncol(data)],type = "response");
 
 data$pred_class_CnotC <- predict(
-  model_CnotC, data[,2:ncol(data)],type = "response");
+  model_CnotC, data[,8:ncol(data)],type = "response");
 
 data$pred_class_HnotH <- predict(
-  model_HnotH, data[,2:ncol(data)],type = "response");
+  model_HnotH, data[,8:ncol(data)],type = "response");
 
 data$pred_class=" ";
 # combine results
@@ -136,13 +167,17 @@ data$pred_class <- ifelse(data$pred_class_CnotC > data$pred_class_HnotH,ifelse(
 data_tab <- table(data[,1], data$pred_class)
 accuracyHCE <- sum(diag(data_tab))/sum(data_tab)*100
 
-save_dataframe("res_13_CHE.txt", data)
+save_as_fasta(data$pred_class, "HCE", "HCE.fasta")
 ```
+
+### C/\~C & H/E
+
+![](images/che.PNG)
 
 ```{r}
 # Tertiary classifier
 # C/~C & H/E
-data = create_samples(window_size, "datasets/test.txt")
+
 data$pred_class_CnotC <- predict(
   model_CnotC, data[,2:ncol(data)],type = "response");
 
@@ -158,13 +193,16 @@ data$pred_class <- ifelse(data$pred_class_CnotC <0.5,ifelse(
 data_tab <- table(data[,1], data$pred_class)
 accuracyCnotCHE <- sum(diag(data_tab))/sum(data_tab)*100
 
-save_dataframe("res_9_CnotCHE.txt", data)
+save_dataframe("CnotCHE.txt", data)
 ```
+
+### H/\~H & C/E
+
+![](images/hce.PNG)
 
 ```{r}
 # Tertiary classifier
 # H/~H & C/E
-data = create_samples(window_size, "datasets/test.txt")
 data$pred_class_HnotH <- predict(
   model_HnotH, data[,2:ncol(data)],type = "response");
 
@@ -180,9 +218,13 @@ data$pred_class <- ifelse(data$pred_class_HnotH <0.5,ifelse(
 data_tab <- table(data[,1], data$pred_class)
 accuracyHnotHCE <- sum(diag(data_tab))/sum(data_tab)*100
 
-save_dataframe("res_5_HnotHCE.txt", data)
+save_dataframe("HnotHCE.txt", data)
 
 ```
+
+## E/\~E & C/H
+
+![](images/ech.PNG)
 
 ```{r}
 # Tertiary classifier
@@ -203,150 +245,5 @@ data$pred_class <- ifelse(data$pred_class_EnotE <0.5,ifelse(
 data_tab <- table(data[,1], data$pred_class)
 accuracyEnotECH <- sum(diag(data_tab))/sum(data_tab)*100
 
-save_dataframe("res_5_EnotECH.txt", data)
-
-```
-
-```{r}
-# creating classifier with different window sizes
-
-dataC = create_samples(5, "datasets/test.txt")
-dataE = create_samples(5, "datasets/test.txt")
-dataH = create_samples(15, "datasets/test.txt")
-data  = create_samples(5, "datasets/test.txt")
-
-# one vs rest (H/~H & E/~E & C/~C)
-data$pred_class_EnotE <- predict(
-  model_EnotE, dataE[,2:ncol(dataE)],type = "response");
-
-data$pred_class_CnotC <- predict(
-  model_CnotC, dataC[,2:ncol(dataC)],type = "response");
-
-data$pred_class_HnotH <- predict(
-  model_HnotH, dataH[,2:ncol(dataH)],type = "response");
-
-data$pred_class=" ";
-# combine results
-data$pred_class <- ifelse(data$pred_class_EnotE > data$pred_class_CnotC,ifelse(
-  data$pred_class_EnotE > data$pred_class_HnotH,"E",data$pred_class
-), data$pred_class);
-
-data$pred_class <- ifelse(data$pred_class_HnotH > data$pred_class_EnotE,ifelse(
-  data$pred_class_HnotH > data$pred_class_CnotC,"H",data$pred_class
-), data$pred_class);
-
-data$pred_class <- ifelse(data$pred_class_CnotC > data$pred_class_HnotH,ifelse(
-  data$pred_class_CnotC > data$pred_class_EnotE,"C",data$pred_class
-), data$pred_class);
-
-data_tab <- table(data[,1], data$pred_class)
-accuracyHCE <- sum(diag(data_tab))/sum(data_tab)*100
-
-save_dataframe("bestCnCHE.txt", data)
-```
-
-```{r}
-  train_samplesE = create_samples(5,"datasets/train.txt");
-  train_samplesC = create_samples(5,"datasets/train.txt");
-  train_samplesH = create_samples(15,"datasets/train.txt");
-  
-  train_samplesEH = create_samples(11,"datasets/train.txt");
-  train_samplesCH = create_samples(9,"datasets/train.txt");
-  train_samplesCE = create_samples(7,"datasets/train.txt");
-  
-  train_samples_CnotC = create_binary_samples_OVR(train_samplesC,"C");
-  train_samples_HnotH = create_binary_samples_OVR(train_samplesH, "H");
-  train_samples_EnotE = create_binary_samples_OVR(train_samplesE, "E");
-  
-  train_samples_CH = create_binary_samples_OVO(train_samplesCH,"C","H");
-  train_samples_EH = create_binary_samples_OVO(train_samplesEH,"E", "H");
-  train_samples_CE = create_binary_samples_OVO(train_samplesCE,"C", "E");
-
-  # train binary models One vs rest
-  model_CnotC<-create_binary_model(train_samples_CnotC);
-  model_HnotH<-create_binary_model(train_samples_HnotH);
-  model_EnotE<-create_binary_model(train_samples_EnotE);
-  
-  model_CH<-create_binary_model(train_samples_CH);
-  model_HE<-create_binary_model(train_samples_EH);
-  model_CE<-create_binary_model(train_samples_CE);
-
-```
-
-```{r}
-# creating classifier with different window sizes
-# CnotC HE
-dataC = create_samples(5, "datasets/test.txt")
-dataEH = create_samples(11, "datasets/test.txt")
-data  = create_samples(5, "datasets/test.txt")
-
-# one vs rest (H/~H & E/~E & C/~C)
-data$pred_class_CnotC <- predict(
-  model_CnotC, dataC[,2:ncol(dataC)],type = "response");
-
-data$pred_class_HE <- predict(
-  model_HE, dataEH[,2:ncol(dataEH)],type = "response");
-
-data$pred_class=" ";
-# combine results
-# combine results
-# combine results
-data$pred_class <- ifelse(data$pred_class_CnotC <0.5,ifelse(
-  data$pred_class_HE > 0.5,"E","H"
-), "C");
-
-data_tab <- table(data[,1], data$pred_class)
-accuracyCnCHE <- sum(diag(data_tab))/sum(data_tab)*100
-
-save_dataframe("bestCnCHE.txt", data)
-```
-
-```{r}
-# creating classifier with different window sizes
-# EnotE CH
-dataE = create_samples(5, "datasets/test.txt")
-dataCH = create_samples(9, "datasets/test.txt")
-data  = create_samples(5, "datasets/test.txt")
-
-data$pred_class_EnotE <- predict(
-  model_EnotE, dataE[,2:ncol(dataE)],type = "response");
-
-data$pred_class_CH <- predict(
-  model_CH, dataCH[,2:ncol(dataCH)],type = "response");
-
-
-# combine results
-data$pred_class <- ifelse(data$pred_class_EnotE <0.5,ifelse(
-  data$pred_class_CH > 0.5,"C","H"
-), "E");
-
-data_tab <- table(data[,1], data$pred_class)
-accuracyEnECH <- sum(diag(data_tab))/sum(data_tab)*100
-
-save_dataframe("bestEnECH.txt", data)
-```
-
-```{r}
-# creating classifier with different window sizes
-# HnotH CE
-dataH = create_samples(15, "datasets/test.txt")
-dataCE = create_samples(7, "datasets/test.txt")
-data  = create_samples(5, "datasets/test.txt")
-
-data$pred_class_HnotH <- predict(
-  model_HnotH, dataH[,2:ncol(dataH)],type = "response");
-
-data$pred_class_CE <- predict(
-  model_CE, dataCE[,2:ncol(dataCE)],type = "response");
-
-data$pred_class=" ";
-# combine results
-data$pred_class <- ifelse(data$pred_class_HnotH <0.5,ifelse(
-  data$pred_class_CE > 0.5,"C","E"
-), "H");
-
-data_tab <- table(data[,1], data$pred_class)
-accuracyHnHCE <- sum(diag(data_tab))/sum(data_tab)*100
-
-save_dataframe("bestHnHCE.txt", data)
+save_dataframe("EnotECH.txt", data)
 ```

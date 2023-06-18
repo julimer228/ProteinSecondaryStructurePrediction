@@ -194,40 +194,17 @@ create_binary_model<-function(dataset,target_col, maxit=80, epsilon=1e-6){
   return(model);
 }
 
-# Function to save the pred_class column to the file
-# @input - filepath - the filepath for the result file
-# @input - dataframe - the dataframe which column will be saved
-save_dataframe<-function(filepath, dataframe){
-  write.table(dataframe$pred_class, filepath, row.names = FALSE, col.names = FALSE)
+
+# The function to save a column from the dataframe to a FASTA format
+# @input - data - the dataframe to save 
+# @input - column - column id
+# @input - id - the sequence id 
+# @input - filepath - filepath to the result file
+save_as_fasta<-function(column, id, filepath){
+  writeLines(paste0(">", id), filepath);
+  aminos<-as.character(column);
+  aminos_str<-paste(aminos, collapse="");
+  writeLines(aminos_str, filepath, append = TRUE);
 }
 
-
-# The function to load data from file and save it as a one string
-# @input - filepath - the filepath with the file to read
-save_as_fasta<-function(filepath){
-  
-  lines <- readLines(filepath);
-  sequence <- "";
-  
-  for( i in 1:length(lines)){
-    line<-lines[i]; # read line
-    sequence<-paste0(sequence, line);
-  }
-  sequence<-gsub("\"","", sequence);
-  path<-gsub(".txt",".fasta",filepath);
-  writeLines(sequence, paste0("corrected",path));
-}
-
-# The function to load filepaths from the file
-# and save these files as one string
-# @input - filepath - the file with filepaths
-save_all_as_fasta<-function(filepath){
-  filepaths<-readLines(filepath)
-  
-  for( i in 1:length(filepaths)){
-    line<-filepaths[i]; # read line
-    res<-save_as_fasta(line);
-  }
-  
-}
 
