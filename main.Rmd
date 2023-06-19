@@ -137,7 +137,7 @@ model_HnotH <- readRDS("model_HnotH13.rds")
 
 model_HE <- readRDS("model_HE13.rds")
 model_CH <- readRDS("model_CH13.rds")
-model_CE <- readRDS("model_CE13.rds")
+model_CE <- readRDS("model_EC13.rds")
 #data <- test_samples
 ```
 
@@ -217,16 +217,16 @@ data$pred_class_HnotH <- predict(
 data$pred_class_CE <- predict(
   model_CE, data[,8:ncol(data)],type = "response")
 
-data$pred_class=" ";
+data$pred_classHnotHCE=" ";
 # combine results
-data$pred_class <- ifelse(data$pred_class_HnotH <0.5,ifelse(
-  data$pred_class_CE > 0.5,"C","E"
+data$pred_classHnotHCE <- ifelse(data$pred_class_HnotH <0.5,ifelse(
+  data$pred_class_CE > 0.5,"E","C"
 ), "H");
 
-data_tab <- table(data$struct_str....struct_str, data$pred_class)
+data_tab <- table(data$struct_str....struct_str, data$pred_classHnotHCE)
 accuracyHnotHCE <- sum(diag(data_tab))/sum(data_tab)*100
 
-save_as_fasta(data$pred_class, "HnotHCE", "HnotHCE.fasta")
+save_as_fasta(data$pred_classHnotHCE, "HnotHCE", "HnotHCE.fasta")
 ```
 
 ## E/\~E & C/H

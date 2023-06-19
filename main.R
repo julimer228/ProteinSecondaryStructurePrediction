@@ -1,3 +1,6 @@
+# Author: Julia Merta 
+# Year: 2023
+
 
 library(stringr)
 library(glmnet) # for logistic regression and Lasso and Elastic-Net Regularized Generalized Linear Models
