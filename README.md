@@ -1,4 +1,4 @@
-# ProteinSecondaryStructurePrediction
+# Protein Secondary Structure Prediction
 The protein secondary structure prediction is an essential problem in bioinformatics. The structure mostly depends on the primary amino acid sequence of the protein. Secondary structure prediction belongs to the group of pattern recognition and classification problems. The secondary structure of a given instance is predicted based on its sequence features. One of the known solutions is using the Support Vector Machine (SVM) to predict the secondary structure, which has been described in [1] and [2]. The aim of this work was the implementation of the protein secondary structure predictor based on a logistic regression model. To do this we implemented the algorithm described in the mentioned articles. The project was implemented in R programming language.
 <h1>Methods</h1>
 
