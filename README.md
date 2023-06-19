@@ -21,13 +21,16 @@ After investigating the dataset, we created the input groups for the logistic re
 <h3>Sliding window coding scheme</h3>
 After investigating the dataset, we created the input groups for the logistic regression classifier. We followed the instructions described in the articles. First, we had to implement the sliding window scheme. This method allows to preserve the information about the local interactions among neighbouring residues. In the beginning, we had to choose the size of the window. To predict the structure of the amino acid in the middle we need to use the sequence whose size is equal to the size of the window. As can be seen, the problem of missing amino acids at the ends of the sequence had to be solved. We complemented the missing values with the empty character "-" to keep the correct window size. The described algorithm for the window size 5 is presented in the image.
 
-![image](https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/740640b6-8b88-43d9-8e27-4bbdda3d4125)
-
+<p align="center">
+  <img  width="500" src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/740640b6-8b88-43d9-8e27-4bbdda3d4125" alt="Sublime's custom image"/>
+</p>
 <h3>Orthogonal Input profile</h3>
 
 The next step was to use orthogonal encoding to assign a unique binary vector to each residue. The weights of all the residues in the window have the value 1 and the rest have the value 0. As a result, we obtain the input matrix with 21 columns (there are 20 different amino acids and one value assigned to the empty character) and with a number of rows equal to the size of the window. Next, we reshaped the orthogonal input to get the one-dimensional input vector. The size of the vector is equal to the result of the multiplication of the number of rows of the matrix by the number of columns. The following rows were written to the vector one by one. Encoding for the input window of the size 5 is presented in the image.
 
-![image](https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/dca757d4-a0e2-4ac0-af7c-f9662ca1f3f2)
+<p align="center">
+  <img  width="500" src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/dca757d4-a0e2-4ac0-af7c-f9662ca1f3f2" alt="Sublime's custom image"/>
+</p>
 
 <h3>Constructing the binary classifiers</h3>
 We constructed six binary classifiers: three one-versus-one classifiers (H/E, C/E, C/H) and three one-versus-rest classifiers (C/~C, E/~E, H/~H). For each classifier, we trained the logistic regression model. 
