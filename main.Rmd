@@ -127,20 +127,28 @@ test_samplesCH$pred_class_CH <- ifelse(
 ```
 
 ## 
+
 Tertiary classifiers
 
-```{r} # load models (window size 13)}
+```{r}
 model_EnotE <- readRDS("model_EnotE13.rds")
 model_CnotC <- readRDS("model_CnotC13.rds")
 model_HnotH <- readRDS("model_HnotH13.rds")
-data <- test_samples
+
+model_HE <- readRDS("model_HE13.rds")
+model_CH <- readRDS("model_CH13.rds")
+model_CE <- readRDS("model_CE13.rds")
+#data <- test_samples
 ```
 
 ### 
+
 Classifier based on three one-versus-one classifiers (C/∼C & E/∼E & H/∼H)
 
 ```{r}
 # one vs rest (H/~H & E/~E & C/~C)
+#data<-test_samples
+
 data$pred_class_EnotE <- predict(
   model_EnotE, data[,8:ncol(data)],type = "response");
 
@@ -150,24 +158,24 @@ data$pred_class_CnotC <- predict(
 data$pred_class_HnotH <- predict(
   model_HnotH, data[,8:ncol(data)],type = "response");
 
-data$pred_class=" ";
+data$pred_classCHE=" ";
 # combine results
-data$pred_class <- ifelse(data$pred_class_EnotE > data$pred_class_CnotC,ifelse(
-  data$pred_class_EnotE > data$pred_class_HnotH,"E",data$pred_class
-), data$pred_class);
+data$pred_classCHE <- ifelse(data$pred_class_EnotE > data$pred_class_CnotC,ifelse(
+  data$pred_class_EnotE > data$pred_class_HnotH,"E",data$pred_classCHE
+), data$pred_classCHE);
 
-data$pred_class <- ifelse(data$pred_class_HnotH > data$pred_class_EnotE,ifelse(
-  data$pred_class_HnotH > data$pred_class_CnotC,"H",data$pred_class
-), data$pred_class);
+data$pred_classCHE <- ifelse(data$pred_class_HnotH > data$pred_class_EnotE,ifelse(
+  data$pred_class_HnotH > data$pred_class_CnotC,"H",data$pred_classCHE
+), data$pred_classCHE);
 
-data$pred_class <- ifelse(data$pred_class_CnotC > data$pred_class_HnotH,ifelse(
-  data$pred_class_CnotC > data$pred_class_EnotE,"C",data$pred_class
-), data$pred_class);
+data$pred_classCHE <- ifelse(data$pred_class_CnotC > data$pred_class_HnotH,ifelse(
+  data$pred_class_CnotC > data$pred_class_EnotE,"C",data$pred_classCHE
+), data$pred_classCHE);
 
-data_tab <- table(data[,1], data$pred_class)
+data_tab <- table(data$struct_str....struct_str, data$pred_classCHE)
 accuracyHCE <- sum(diag(data_tab))/sum(data_tab)*100
 
-save_as_fasta(data$pred_class, "HCE", "HCE.fasta")
+save_as_fasta(data$pred_classCHE, "HCE", "HCE.fasta")
 ```
 
 ### C/\~C & H/E
@@ -179,21 +187,21 @@ save_as_fasta(data$pred_class, "HCE", "HCE.fasta")
 # C/~C & H/E
 
 data$pred_class_CnotC <- predict(
-  model_CnotC, data[,2:ncol(data)],type = "response");
+  model_CnotC, data[,8:ncol(data)],type = "response");
 
 data$pred_class_HE <- predict(
-  model_HE, data[,2:ncol(data)],type = "response")
+  model_HE, data[,8:ncol(data)],type = "response")
 
-data$pred_class=" ";
+data$pred_classCnotCHE=" ";
 # combine results
-data$pred_class <- ifelse(data$pred_class_CnotC <0.5,ifelse(
+data$pred_classCnotCHE <- ifelse(data$pred_class_CnotC <0.5,ifelse(
   data$pred_class_HE > 0.5,"H","E"
 ), "C");
 
-data_tab <- table(data[,1], data$pred_class)
+data_tab <- table(data$struct_str....struct_str, data$pred_classCnotCHE)
 accuracyCnotCHE <- sum(diag(data_tab))/sum(data_tab)*100
 
-save_dataframe("CnotCHE.txt", data)
+save_as_fasta(data$pred_classCnotCHE, "CnotCHE", "CnotCHE.fasta")
 ```
 
 ### H/\~H & C/E
@@ -204,10 +212,10 @@ save_dataframe("CnotCHE.txt", data)
 # Tertiary classifier
 # H/~H & C/E
 data$pred_class_HnotH <- predict(
-  model_HnotH, data[,2:ncol(data)],type = "response");
+  model_HnotH, data[,8:ncol(data)],type = "response");
 
 data$pred_class_CE <- predict(
-  model_CE, data[,2:ncol(data)],type = "response")
+  model_CE, data[,8:ncol(data)],type = "response")
 
 data$pred_class=" ";
 # combine results
@@ -215,11 +223,10 @@ data$pred_class <- ifelse(data$pred_class_HnotH <0.5,ifelse(
   data$pred_class_CE > 0.5,"C","E"
 ), "H");
 
-data_tab <- table(data[,1], data$pred_class)
+data_tab <- table(data$struct_str....struct_str, data$pred_class)
 accuracyHnotHCE <- sum(diag(data_tab))/sum(data_tab)*100
 
-save_dataframe("HnotHCE.txt", data)
-
+save_as_fasta(data$pred_class, "HnotHCE", "HnotHCE.fasta")
 ```
 
 ## E/\~E & C/H
@@ -229,21 +236,20 @@ save_dataframe("HnotHCE.txt", data)
 ```{r}
 # Tertiary classifier
 # E/~E & C/H
-data = create_samples(window_size, "datasets/test.txt")
 data$pred_class_EnotE <- predict(
-  model_EnotE, data[,2:ncol(data)],type = "response");
+  model_EnotE, data[,8:ncol(data)],type = "response");
 
 data$pred_class_CH <- predict(
-  model_CH, data[,2:ncol(data)],type = "response")
+  model_CH, data[,8:ncol(data)],type = "response")
 
-data$pred_class=" ";
+data$pred_classEnotECH=" ";
 # combine results
-data$pred_class <- ifelse(data$pred_class_EnotE <0.5,ifelse(
+data$pred_classEnotECH <- ifelse(data$pred_class_EnotE <0.5,ifelse(
   data$pred_class_CH > 0.5,"C","H"
 ), "E");
 
-data_tab <- table(data[,1], data$pred_class)
+data_tab <- table(data$struct_str....struct_str, data$pred_classEnotECH)
 accuracyEnotECH <- sum(diag(data_tab))/sum(data_tab)*100
 
-save_dataframe("EnotECH.txt", data)
+save_as_fasta(data$pred_classEnotECH, "EnotECH", "EnotECH.fasta")
 ```

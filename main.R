@@ -204,7 +204,7 @@ save_as_fasta<-function(column, id, filepath){
   writeLines(paste0(">", id), filepath);
   aminos<-as.character(column);
   aminos_str<-paste(aminos, collapse="");
-  writeLines(aminos_str, filepath, append = TRUE);
+  write(aminos_str, filepath, append = TRUE);
 }
 
 
