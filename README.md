@@ -68,3 +68,8 @@ Then we compared the Q3 and SOV results we got for each of the tertiary classifi
 <p>
 [2] Hua Sujun, and Sun Zhirong. ‘A novel method of protein secondary structure prediction with high segment overlap measure: support vector machine approach’. In:Journal of molecular biology. 2001, 397––407.
 </p>
+
+<p>
+[3] Liu T and Wang Z. ‘A further refined definition of segment overlap score and its significance for protein structure similarity’. In: vol. Source Code Biol Med. 2018, pp. 594–598. doi: 10.1109/ICMIRA.2013.124.9
+</p>
+
