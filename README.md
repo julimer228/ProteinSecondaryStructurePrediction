@@ -30,7 +30,7 @@ We constructed six binary classifiers: three one-versus-one classifiers (H/E, C/
 
 <h2>Constructing tertiary classifier</h2>
 
-The binary classifiers were used to create the different tertiary classifiers. We created three tree classifiers described in \cite{bib:svm0} (C/~C \& H/E,  E/~E \& C/H, H/~$H \& C/E). For example for the second classifier when the first binary classifier classifies the sample as C its predicted value is C, otherwise the class is predicted by the second one-versus-one classifier H/E. Their structures are presented in figures. We also tested the classifier based on three one-versus-one classifiers (C/~C \& E/~E \& H/~H). The sample is assigned the class with the highest probability.
+The binary classifiers were used to create the different tertiary classifiers. We created three tree classifiers described in \cite{bib:svm0} (C/~C & H/E,  E/~E & C/H, H/~$H & C/E). For example for the second classifier when the first binary classifier classifies the sample as C its predicted value is C, otherwise the class is predicted by the second one-versus-one classifier H/E. Their structures are presented in figures. We also tested the classifier based on three one-versus-one classifiers (C/~C \& E/~E \& H/~H). The sample is assigned the class with the highest probability.
 
 <h1>Results</h1>
 
