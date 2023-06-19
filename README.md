@@ -39,14 +39,14 @@ We constructed six binary classifiers: three one-versus-one classifiers (H/E, C/
 The binary classifiers were used to create the different tertiary classifiers. We created three tree classifiers described in the articles. (C/~C & H/E,  E/~E & C/H, H/~H & C/E). For example for the second classifier when the first binary classifier classifies the sample as C its predicted value is C, otherwise the class is predicted by the second one-versus-one classifier H/E. Their structures are presented in figures. We also tested the classifier based on three one-versus-one classifiers (C/~C & E/~E & H/~H). The sample is assigned the class with the highest probability.
 
 <p align="center">
-  <img src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/b143e4ec-d107-4af3-9462-f5cd6766fb01" alt="Sublime's custom image"/>
+  <img width="300" src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/b143e4ec-d107-4af3-9462-f5cd6766fb01" alt="Sublime's custom image"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/c006c433-37e7-4325-b1c7-bbd4fb4c53fc" alt="Sublime's custom image"/>
+  <img width="300" src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/c006c433-37e7-4325-b1c7-bbd4fb4c53fc" alt="Sublime's custom image"/>
 </p>
 <p align="center">
-  <img src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/a7a29a10-aef0-4650-bb12-890bc878ec7b" alt="Sublime's custom image"/>
+  <img  width="300" src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/a7a29a10-aef0-4650-bb12-890bc878ec7b" alt="Sublime's custom image"/>
 </p>
 
 <h1>Results</h1>
