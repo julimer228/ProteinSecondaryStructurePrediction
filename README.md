@@ -42,11 +42,12 @@ The binary classifiers were used to create the different tertiary classifiers. W
   <img src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/b143e4ec-d107-4af3-9462-f5cd6766fb01" alt="Sublime's custom image"/>
 </p>
 
-
-
-![image](https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/c006c433-37e7-4325-b1c7-bbd4fb4c53fc)
-
-![image](https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/a7a29a10-aef0-4650-bb12-890bc878ec7b)
+<p align="center">
+  <img src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/c006c433-37e7-4325-b1c7-bbd4fb4c53fc" alt="Sublime's custom image"/>
+</p>
+<p align="center">
+  <img src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/a7a29a10-aef0-4650-bb12-890bc878ec7b" alt="Sublime's custom image"/>
+</p>
 
 <h1>Results</h1>
 
