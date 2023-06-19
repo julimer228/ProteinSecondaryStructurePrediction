@@ -59,7 +59,27 @@ We tested different window sizes (from 5 to 13 amino acids, only odd sizes). The
   <img  width="600" src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/a200ac25-8c38-44a8-bce5-abbf81bb5370" alt="Sublime's custom image"/>
 </p>
 
-Then we compared the Q3 and SOV results we got for each of the tertiary classifiers. To do that, we saved the predicted structure in a FASTA format. For each classifier, we used the window that provided the best accuracy for the binary classification. Results are presented in the table 3.2.
+Then we compared the Q3 and SOV results we got for each of the tertiary classifiers. To do that, we saved the predicted structure in a FASTA format. For each classifier, we used the window that provided the best accuracy for the binary classification. Results are presented in the table 3.2. The best results were achieved by the H/∼H & C/∼C & E/∼E classifier.
+
+<p align="center">
+  <img  width="600" src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/74202f43-ff9f-42bb-abc0-c969c27655ab" alt="Sublime's custom image"/>
+</p>
+<h1>Conclusions</h1>
+The project allowed us to learn about the problem of protein secondary structure
+prediction. The obtained results are worse than the results achieved with the method
+described in the [2]. It should be noted that the dataset used in the project is not exactly
+the same dataset used by the authors of the articles. However, the Q3 and SOV measures
+are better than 33.33%, so our classifiers work better than guessing. Testing different
+window sizes allowed us to find the binary classifiers that provide better accuracy. Building
+the classifier from three one-versus-rest classifiers allowed us to achieve the highest Q3
+and SOV values. In order to further develop the project, it would be necessary to see
+if larger window sizes would allow for greater model accuracy, as it can be seen that
+for the tested window sizes, accuracy increases as the size increases. One could also try
+to build more complex classifiers for recognizing the three classes, possibly to improve
+prediction accuracy. The Current solutions based on deep learning provide better SOV
+and Q3 measures than our solution based on logistic regression.
+8
+
 
 <h1>Bibliography</h1>
 <p>
