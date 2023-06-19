@@ -62,5 +62,9 @@ We tested different window sizes (from 5 to 13 amino acids, only odd sizes). The
 Then we compared the Q3 and SOV results we got for each of the tertiary classifiers. To do that, we saved the predicted structure in a FASTA format. For each classifier, we used the window that provided the best accuracy for the binary classification. Results are presented in the table 3.2.
 
 <h1>Bibliography</h1>
+<p>
 [1] Mayuri Patel and Hitesh Shah. ‘Protein Secondary Structure Prediction Using Support Vector Machines (SVMs)’. In: 2013 International Conference on Machine Intelligence and Research Advancement. 2013, pp. 594–598. doi: 10.1109/ICMIRA.2013.124.
+</p>
+<p>
 [2] Hua Sujun, and Sun Zhirong. ‘A novel method of protein secondary structure prediction with high segment overlap measure: support vector machine approach’. In:Journal of molecular biology. 2001, 397––407.
+</p>
