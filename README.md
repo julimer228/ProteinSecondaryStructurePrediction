@@ -78,7 +78,7 @@ for the tested window sizes, accuracy increases as the size increases. One could
 to build more complex classifiers for recognizing the three classes, possibly to improve
 prediction accuracy. The Current solutions based on deep learning provide better SOV
 and Q3 measures than our solution based on logistic regression.
-8
+
 
 
 <h1>Bibliography</h1>
