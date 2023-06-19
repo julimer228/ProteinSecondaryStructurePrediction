@@ -56,7 +56,7 @@ The binary classifiers were used to create the different tertiary classifiers. W
 We tested different window sizes (from 5 to 13 amino acids, only odd sizes). The table 3.1 presents the accuracy scores obtained for each binary classifier on the test dataset. The best results were obtained for the window of size 13.
 
 <p align="center">
-  <img  width="300" src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/a200ac25-8c38-44a8-bce5-abbf81bb5370" alt="Sublime's custom image"/>
+  <img  width="600" src="https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/a200ac25-8c38-44a8-bce5-abbf81bb5370" alt="Sublime's custom image"/>
 </p>
 
 Then we compared the Q3 and SOV results we got for each of the tertiary classifiers. To do that, we saved the predicted structure in a FASTA format. For each classifier, we used the window that provided the best accuracy for the binary classification. Results are presented in the table 3.2.
