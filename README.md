@@ -37,15 +37,15 @@ We constructed six binary classifiers: three one-versus-one classifiers (H/E, C/
 <h3>Constructing tertiary classifier</h3>
 
 The binary classifiers were used to create the different tertiary classifiers. We created three tree classifiers described in the articles. (C/~C & H/E,  E/~E & C/H, H/~H & C/E). For example for the second classifier when the first binary classifier classifies the sample as C its predicted value is C, otherwise the class is predicted by the second one-versus-one classifier H/E. Their structures are presented in figures. We also tested the classifier based on three one-versus-one classifiers (C/~C & E/~E & H/~H). The sample is assigned the class with the highest probability.
-
+<p align="center">
 ![image](https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/b143e4ec-d107-4af3-9462-f5cd6766fb01)
 
 ![image](https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/c006c433-37e7-4325-b1c7-bbd4fb4c53fc)
 
 ![image](https://github.com/julimer228/ProteinSecondaryStructurePrediction/assets/56163818/a7a29a10-aef0-4650-bb12-890bc878ec7b)
-
+</p>
 <h1>Results</h1>
 
-
+<h1>Bibliography</h1>
 [1] Mayuri Patel and Hitesh Shah. ‘Protein Secondary Structure Prediction Using Support Vector Machines (SVMs)’. In: 2013 International Conference on Machine Intelligence and Research Advancement. 2013, pp. 594–598. doi: 10.1109/ICMIRA.2013.124.
 [2] Hua Sujun, and Sun Zhirong. ‘A novel method of protein secondary structure prediction with high segment overlap measure: support vector machine approach’. In:Journal of molecular biology. 2001, 397––407.
