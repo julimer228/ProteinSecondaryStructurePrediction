@@ -7,7 +7,6 @@ library(glmnet) # for logistic regression and Lasso and Elastic-Net Regularized 
 library(parallel) 
 library(doParallel)
 # function to orthogonally encode the sequence
-# We add X (unknown aminoacid) as a new class 
 # @input - sequence - original sequence
 # @output - encoded_sequence - orthogonally encoded sequence
 orthogonally_encoding<-function(sequence){
