@@ -1,6 +1,4 @@
-# Author: Julia Merta 
-# Year: 2023
-
+ # Year: 2023
 
 library(stringr)
 library(glmnet) # for logistic regression and Lasso and Elastic-Net Regularized Generalized Linear Models
@@ -158,7 +156,7 @@ read_protein_data<-function(filepath){
 }
 
 
-# The function to read the file and create the samples
+# The function to read the file and create the samples (using multiple cores)
 # @input - window_size - the size of the window
 # @input - filepath - the file-path to the file with data
 # @output - samples - sampled data
@@ -168,7 +166,7 @@ create_samples<-function(window_size, filepath){
   samples <- data.frame(); # initialize variables
   
   
-  cl <- makeCluster(12);  # Tworzy klaster z 12 rdzeniami procesora
+  cl <- makeCluster(12);
   registerDoParallel(cl);
   clusterExport(cl=cl, c('sample_protein', 'create_window','orthogonally_encoding'));
   
