@@ -76,7 +76,7 @@ and SOV values. In order to further develop the project, it would be necessary t
 if larger window sizes would allow for greater model accuracy, as it can be seen that
 for the tested window sizes, accuracy increases as the size increases. One could also try
 to build more complex classifiers for recognizing the three classes, possibly to improve
-prediction accuracy. The Current solutions based on deep learning provide better SOV
+prediction accuracy. Current solutions based on deep learning provide better SOV
 and Q3 measures than our solution based on logistic regression.
 
 
